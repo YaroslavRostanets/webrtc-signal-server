@@ -2,6 +2,7 @@ const responses = [];
 
 const eventHandler = (key, event, data, res) => {
   const index = responses.findIndex( resp => resp.key !== key);
+  console.log('index: ', index);
   if (~index) {
     const response = responses[index];
     response.res.write(JSON.stringify({
@@ -30,6 +31,7 @@ const postRouter = async (url, req, res) => {
   switch (url) {
     case '/send':
       {
+        console.table(responses);
         const {key, event, data} = body;
         eventHandler(key, body, data, res);
       }
@@ -42,6 +44,9 @@ const postRouter = async (url, req, res) => {
           key: body.key,
           res: res
         });
+        setInterval(() => {
+          console.table(responses);
+        }, 2000);
         setTimeout(() => {
           const index = responses.findIndex( resp => resp.id === unique );
           if (~index) {
@@ -49,8 +54,7 @@ const postRouter = async (url, req, res) => {
             responses[index].res.end();
             responses.splice(index, 1);
           }
-          console.table(responses);
-        }, 10000);
+        }, 30000);
       }
       break;
   }
