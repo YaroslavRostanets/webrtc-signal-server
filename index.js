@@ -6,7 +6,7 @@ global.status = {};
 const GetRouter = (url, res) => {
   switch (url) {
     case '/':
-      res.write(status);
+      res.write('TEST');
       res.end(); //end the response
       break;
   }
@@ -20,5 +20,5 @@ http.createServer(function (req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   res.setHeader('Access-Control-Allow-Credentials', true);
   req.method === 'GET' ? GetRouter(req.url, res) : PostRouter(req.url, req, res);
-}).listen(3000); //the server object listens on port 8080
+}).listen(80); //the server object listens on port 8080
 
