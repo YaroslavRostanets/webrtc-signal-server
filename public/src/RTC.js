@@ -1,7 +1,7 @@
-import {SIGNAL_SERVER, PLATFORM_SOCKET} from '../config';
-import SignalEmitter from './SignalEmitter';
-import {platformSocket} from './platformSocket';
-import {config} from './rtcConfig';
+import {SIGNAL_SERVER, PLATFORM_SOCKET} from '../config.js';
+import SignalEmitter from './SignalEmitter.js';
+import {platformSocket} from './platformSocket.js';
+import {config} from './rtcConfig.js';
 console.log(SIGNAL_SERVER, PLATFORM_SOCKET);
 const se = new SignalEmitter(SIGNAL_SERVER);
 

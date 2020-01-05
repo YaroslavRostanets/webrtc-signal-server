@@ -2,7 +2,7 @@ const http = require('http');
 const static = require('node-static');
 const ws = require('ws');
 
-const file = new(static.Server)('./public');
+const file = new(static.Server)();
 
 Array.prototype.removeEl = function(el) {
   const index = this.findIndex(item => el === item);
@@ -27,15 +27,6 @@ const messageHandler = (message, ws) => {
 };
 
 global.status = {};
-
-const GetRouter = (url, res) => {
-  switch (url) {
-    case '/':
-      res.write('TEST');
-      res.end(); //end the response
-      break;
-  }
-};
 
 http.createServer(function (req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

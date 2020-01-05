@@ -6,8 +6,11 @@
 </head>
 <body>
 <div id="app">
-    <platform></platform>
+
 </div>
-<script src="dist/build.js"></script>
+<script type=module>
+    import RTC from './src/RTC.js';
+    const webrtc = new RTC(false);
+</script>
 </body>
 </html>
