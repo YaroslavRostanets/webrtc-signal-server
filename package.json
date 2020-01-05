@@ -10,6 +10,7 @@
   "author": "Yaroslav Rostanets <rostanets@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "node-static": "^0.7.11",
     "ws": "^7.2.1"
   }
 }

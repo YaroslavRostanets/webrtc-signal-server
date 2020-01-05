@@ -1,5 +1,8 @@
 const http = require('http');
+const static = require('node-static');
 const ws = require('ws');
+
+const file = new(static.Server)('./public');
 
 Array.prototype.removeEl = function(el) {
   const index = this.findIndex(item => el === item);
@@ -19,13 +22,9 @@ wss.on('connection', ws => {
 });
 
 const messageHandler = (message, ws) => {
-  console.log('CONNECTED: ', sockets);
+  console.log('CONNECTED: ', sockets.length);
   sockets.allExcept(ws).forEach( socket => socket.send(message));
 };
-
-
-
-const PostRouter = require('./PostRouter');
 
 global.status = {};
 
@@ -43,6 +42,6 @@ http.createServer(function (req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  req.method === 'GET' ? GetRouter(req.url, res) : PostRouter(req.url, req, res);
+  file.serve(req, res);
 }).listen(3000); //the server object listens on port 8080
 
