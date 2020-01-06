@@ -2,7 +2,7 @@ const http = require('http');
 const static = require('node-static');
 const ws = require('ws');
 
-const file = new(static.Server)();
+const file = new(static.Server)('./public');
 
 Array.prototype.removeEl = function(el) {
   const index = this.findIndex(item => el === item);
