@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+/ssl
+/public/.well-known
 
 # local env files
 .env.local

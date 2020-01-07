@@ -77,8 +77,8 @@ export default class RTC {
 
   async createAnswer() {
     await this._addStream();
-    this.platformSocket = await platformSocket(PLATFORM_SOCKET);
-    console.log('platformSocket: ', this.platformSocket);
+    //this.platformSocket = await platformSocket(PLATFORM_SOCKET);
+    //console.log('platformSocket: ', this.platformSocket);
     this.pc.createAnswer()
       .then( answer => {
         this.pc.setLocalDescription(answer);
@@ -99,8 +99,6 @@ export default class RTC {
 
   _parseControlMessage(e) {
     //const message = JSON.parse(e.data);
-    console.log('MESSAGE: ', e.data);
-    console.log('SOCKET: ', this.platformSocket);
     if(this.platformSocket && this.platformSocket.send) {
 
       this.platformSocket.send(e.data);
@@ -108,4 +106,3 @@ export default class RTC {
 
   }
 }
-
