@@ -90,6 +90,13 @@ export default class RTC {
   async _addStream() {
     return navigator.mediaDevices.getUserMedia({video: true, audio: false})
       .then(stream => {
+        /*----------------------*/
+        const testVideo = document.querySelector('#test-video');
+        if(testVideo) {
+          testVideo.srcObject = stream;
+          testVideo.play();
+        }
+        /*----------------------*/
         stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
       })
       .catch(function(err) {
