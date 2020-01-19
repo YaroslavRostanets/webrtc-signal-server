@@ -78,7 +78,10 @@ export default class RTC {
   async createAnswer() {
     await this._addStream();
     //this.platformSocket = await platformSocket(PLATFORM_SOCKET);
-    //console.log('platformSocket: ', this.platformSocket);
+    /*----------------------*/
+    platformSocket(PLATFORM_SOCKET)
+    .then(socket => this.platformSocket = socket)
+    /*----------------------*/
     this.pc.createAnswer()
       .then( answer => {
         this.pc.setLocalDescription(answer);
@@ -90,6 +93,7 @@ export default class RTC {
   async _addStream() {
     return navigator.mediaDevices.getUserMedia({video: true, audio: false})
       .then(stream => {
+        stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
         /*----------------------*/
         const testVideo = document.querySelector('#test-video');
         if(testVideo) {
@@ -97,7 +101,6 @@ export default class RTC {
           testVideo.play();
         }
         /*----------------------*/
-        stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
       })
       .catch(function(err) {
         console.log(err);

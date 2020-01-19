@@ -3,25 +3,23 @@ const https = require('https');
 const static = require('node-static');
 const ws = require('ws');
 const fs = require('fs');
+const routeParser = require('./routeParser');
 
 const file = new(static.Server)('./public');
 
 Array.prototype.removeEl = function(el) {
   const index = this.findIndex(item => el === item);
-  if (index) this.slice(index, 1);
+  if (~index) this.slice(index, 1);
 };
 Array.prototype.allExcept = function(el) {
   return this.filter(item => item !== el);
 };
 
 
-global.status = {};
+global.conformitys = {};
 
 http.createServer(function (req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (routeParser(req, res)) return;
   file.serve(req, res);
 }).listen(3000); //the server object listens on port 8080
 
@@ -32,24 +30,23 @@ const options = {
 };
 
 const httpsServer = https.createServer(options, function (req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (routeParser(req, res)) return;
   file.serve(req, res);
 }).listen(2999); //the server object listens on port 8080
 
 
 const sockets = [];
 const wss = new ws.Server({ server: httpsServer });
-wss.on('connection', ws => {
+wss.on('connection', (ws, req) => {
+  console.log(`Conn Url ${req.url}`);
   sockets.push(ws);
-  console.log('CONNECTED: ', sockets);
   ws.on('message', message => messageHandler(message, ws));
-  ws.onclose = () => {console.log('CONNECTED: ', sockets); sockets.removeEl(ws)};
+  ws.onclose = () => {
+    sockets.removeEl(ws);
+    console.log('DISCONNECTED: ', sockets.length, new Date());
+  };
 });
 
 const messageHandler = (message, ws) => {
-  console.log('CONNECTED: ', sockets.length);
   sockets.allExcept(ws).forEach( socket => socket.send(message));
 };

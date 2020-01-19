@@ -1,7 +1,7 @@
 
 const SignalEmitter = function(url) {
   this.events = {};
-  this.connection = new WebSocket(url);
+  this.connection = new WebSocket(url + '?id=5');
   this.connection.onerror = err => console.log(`WebSocket error: ${error}`);
   this.connection.onmessage = e => {
     const {event, data} = JSON.parse(e.data);
