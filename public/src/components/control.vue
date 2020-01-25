@@ -1,24 +1,32 @@
 <template>
-  <div class="container">
-    <video width="800" ref="video"></video>
-    <div class="flex">
-      <div class="col">
-        <button @click="connect">CONNECT</button>
-        <table>
-          <tr><td>power: </td><td>{{power}}%</td></tr>
-          <tr><td>left cat: </td><td>{{leftCat}}</td></tr>
-          <tr><td>right cat: </td><td>{{rightCat}}</td></tr>
-        </table>
-      </div>
-      <div class="col">
-        <div @mousemove="mouseMove" ref="balance" class="balance"></div>
+  <div>
+
+    <auth v-if="true"></auth>
+
+    <div v-else class="container">
+      <video width="800" ref="video"></video>
+      <div class="flex">
+        <div class="col">
+          <button @click="connect">CONNECT</button>
+          <table>
+            <tr><td>power: </td><td>{{power}}%</td></tr>
+            <tr><td>left cat: </td><td>{{leftCat}}</td></tr>
+            <tr><td>right cat: </td><td>{{rightCat}}</td></tr>
+          </table>
+        </div>
+        <div class="col">
+          <div @mousemove="mouseMove" ref="balance" class="balance"></div>
+        </div>
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
   import RTC from '../RTC';
+  import auth from './auth';
+
   const floor = num => Math.floor(num * 100) / 100;
 
   export default {
@@ -32,6 +40,9 @@
       back: 0,
       channel: null
     }),
+    components: {
+      auth
+    },
     methods: {
       connect() {
         this.webrtc.createOffer();
