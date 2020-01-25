@@ -3,7 +3,9 @@ const https = require('https');
 const static = require('node-static');
 const ws = require('ws');
 const fs = require('fs');
+const url = require('url');
 const routeParser = require('./routeParser');
+const { trim } = require('./functions');
 
 const file = new(static.Server)('./public');
 
@@ -15,8 +17,19 @@ Array.prototype.allExcept = function(el) {
   return this.filter(item => item !== el);
 };
 
-
-global.conformitys = {};
+global.conformitys = {
+  set(device, id, ws) {
+    console.log(device, id, ws);
+    if (!this.id) this[id] = {};
+    console.log(this);
+    this[id][device] = ws;
+  },
+  unset(device, id) {
+    delete this[id][device];
+    if (!Object.keys(this[id]).length) delete this[id];
+    console.log('RESULT: ', this);
+  }
+};
 
 http.createServer(function (req, res) {
   if (routeParser(req, res)) return;
@@ -34,18 +47,24 @@ const httpsServer = https.createServer(options, function (req, res) {
   file.serve(req, res);
 }).listen(2999); //the server object listens on port 8080
 
-
-const sockets = [];
 const wss = new ws.Server({ server: httpsServer });
-wss.on('connection', (ws, req) => {
+
+const connectionHandler = (ws, req) => {
   console.log(`Conn Url ${req.url}`);
-  sockets.push(ws);
+  const parsedURL = url.parse(req.url, true);
+  const {id} = parsedURL.query;
+  const device = trim(parsedURL.pathname, '/') === 'platform' ? 'platform' : 'control';
+  if (device === 'platform') {
+    global.conformitys.set('platform', id, ws);
+  } else {
+    global.conformitys.set('control', id, ws);
+  }
+  console.log(global.conformitys);
   ws.on('message', message => messageHandler(message, ws));
-  ws.onclose = () => {
-    sockets.removeEl(ws);
-    console.log('DISCONNECTED: ', sockets.length, new Date());
-  };
-});
+  ws.onclose = () => global.conformitys.unset(device, id);
+}
+
+wss.on('connection', connectionHandler);
 
 const messageHandler = (message, ws) => {
   sockets.allExcept(ws).forEach( socket => socket.send(message));
