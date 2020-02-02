@@ -10,7 +10,13 @@
 </div>
 <script type=module>
     import RTC from './src/RTC.js';
-    const webrtc = new RTC(false);
+    import config from './config.js';
+
+    const webrtc = new RTC({
+        isControl: false,
+        signalServer: config.signalServer,
+        id: 1111
+    });
 </script>
 </body>
 </html>

@@ -1,8 +1,10 @@
 
-const SignalEmitter = function(url) {
+const SignalEmitter = function(options) {
+  const {isControl, signalServer, id} = options;
   this.events = {};
-  this.connection = new WebSocket(url + 'platform?id=5');
-  this.connection.onerror = err => console.log(`WebSocket error: ${error}`);
+  const url = `${signalServer}${isControl ? '' : 'platform'}?id=${id}`;
+  this.connection = new WebSocket(url);
+  this.connection.onerror = err => console.log(`WebSocket error: ${err}`);
   this.connection.onmessage = e => {
     const {event, data} = JSON.parse(e.data);
     this.emit(event, data);

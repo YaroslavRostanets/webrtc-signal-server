@@ -1,48 +1,25 @@
 <template>
-  <div>
-
-    <auth v-if="true"></auth>
-
-    <div v-else class="container">
-      <video width="800" ref="video"></video>
-      <div class="flex">
-        <div class="col">
-          <button @click="connect">CONNECT</button>
-          <table>
-            <tr><td>power: </td><td>{{power}}%</td></tr>
-            <tr><td>left cat: </td><td>{{leftCat}}</td></tr>
-            <tr><td>right cat: </td><td>{{rightCat}}</td></tr>
-          </table>
-        </div>
-        <div class="col">
-          <div @mousemove="mouseMove" ref="balance" class="balance"></div>
-        </div>
+  <div v-else class="container">
+    <video width="800" ref="video"></video>
+    <div class="flex">
+      <div class="col">
+        <button @click="connect">CONNECT</button>
+        <table>
+          <tr><td>power: </td><td>{{power}}%</td></tr>
+          <tr><td>left cat: </td><td>{{leftCat}}</td></tr>
+          <tr><td>right cat: </td><td>{{rightCat}}</td></tr>
+        </table>
+      </div>
+      <div class="col">
+        <div @mousemove="mouseMove" ref="balance" class="balance"></div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
-  import RTC from '../RTC';
-  import auth from './auth';
-
-  const floor = num => Math.floor(num * 100) / 100;
-
   export default {
-    name: "control",
-    data: () => ({
-      video: false,
-      power: 0,
-      leftCat: 0,
-      rightCat: 0,
-      forward: 0,
-      back: 0,
-      channel: null
-    }),
-    components: {
-      auth
-    },
+    name: "display",
     methods: {
       connect() {
         this.webrtc.createOffer();
@@ -115,36 +92,6 @@
   }
 </script>
 
-<style lang="scss" scoped>
-  .container {
-    width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  video {
-    background: #2c3e50;
-  }
-  .flex {
-    width: 100%;
-    display: flex;
-  }
-  .col {
-    width: 50%;
-  }
-  .balance {
-    width: 100%;
-    height: 80px;
-    background: #F3F3F3;
-    position: relative;
-    cursor: move;
-    &:before {
-      content: "";
-      position: absolute;
-      width: 1px;
-      height: 100%;
-      left: 50%;
-      margin-left: -1px;
-      background: black;
-    }
-  }
+<style scoped>
+
 </style>

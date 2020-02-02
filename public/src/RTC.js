@@ -1,20 +1,18 @@
-import {SIGNAL_SERVER, PLATFORM_SOCKET} from '../config.js';
 import SignalEmitter from './SignalEmitter.js';
-import {platformSocket} from './platformSocket.js';
+//import {platformSocket} from './platformSocket.js';
 import {config} from './rtcConfig.js';
-console.log(SIGNAL_SERVER, PLATFORM_SOCKET);
-const se = new SignalEmitter(SIGNAL_SERVER);
 
 export default class RTC {
-  constructor(isControl, videoStreamCallback, dataChannelCallback) {
-    console.log('isControl: ', isControl);
+  constructor(options, videoStreamCallback, dataChannelCallback) {
+    const {isControl, signalServer, id} = options;
     this.isControl = isControl;
+    this.SE = new SignalEmitter(options);
     this.videoStreamCallback = videoStreamCallback;
     this.dataChannelCallback = dataChannelCallback;
     this.pc = new RTCPeerConnection(config);
     this.pc.onicecandidate = evt => {
       if(evt.candidate) {
-        se.send('ICE', evt.candidate);
+        this.SE.send('ICE', evt.candidate);
       }
     };
     this.pc.onconnection = () => {
@@ -44,11 +42,11 @@ export default class RTC {
         };
       };
     }
-    se.on('SDP', sdp => {
+    this.SE.on('SDP', sdp => {
       console.log('SDP CANDIDATE: ', sdp);
       this._setRemoteSDP(sdp);
     });
-    se.on('ICE', ice => {
+    this.SE.on('ICE', ice => {
       console.log('ICE CANDIDATE: ', ice);
       this.pc.addIceCandidate(new RTCIceCandidate(ice));
     });
@@ -71,23 +69,23 @@ export default class RTC {
       this.pc.setLocalDescription(offer);
       return offer;
     })
-      .then(offer => se.send('SDP', offer))
+      .then(offer => this.SE.send('SDP', offer))
       .catch(err => console.error(err));
   }
 
   async createAnswer() {
     await this._addStream();
-    //this.platformSocket = await platformSocket(PLATFORM_SOCKET);
-    /*----------------------*/
-    platformSocket(PLATFORM_SOCKET)
-    .then(socket => this.platformSocket = socket)
+    // this.platformSocket = await platformSocket(PLATFORM_SOCKET);
+    // /*----------------------*/
+    // platformSocket(PLATFORM_SOCKET)
+    // .then(socket => this.platformSocket = socket);
     /*----------------------*/
     this.pc.createAnswer()
       .then( answer => {
         this.pc.setLocalDescription(answer);
         return answer;
       })
-      .then(answer => se.send('SDP', answer))
+      .then(answer => this.SE.send('SDP', answer))
   }
 
   async _addStream() {

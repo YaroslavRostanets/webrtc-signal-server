@@ -31,10 +31,12 @@
 </template>
 
 <script>
-  import store from '../store';
+  import { mapState } from 'vuex';
+  import store from '../../configureStore';
 
   export default {
     name: "auth",
+    store: store,
     data: () => ({
       pass: '',
       stars: ''
@@ -44,23 +46,17 @@
         this.stars = this.pass.split('').reduce(acc => acc += '*', '');
       },
     },
-    created() {
-      fetch(`${window.location.origin}/config.json`)
-        .then(res => res.json())
-        .then(config => {
-          console.log('TEST: ', config);
-          store.config = config
-        });
-    },
     mounted() {
       this.setFocus();
     },
+    computed: mapState(['config', 'isConnect']),
     methods: {
       setFocus() {
         this.$refs['hash'].focus();
       },
       submit() {
-        console.log('submit')
+        console.log('submit: ', this.pass);
+        this.$emit('submit', this.pass);
       }
     }
   }
