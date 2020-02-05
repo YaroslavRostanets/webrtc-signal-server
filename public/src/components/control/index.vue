@@ -22,7 +22,7 @@
     methods: {
       ...mapMutations(['setAuth']),
       connect(id) {
-        this.SE = new SignalEmitter({
+        this.se = new SignalEmitter({
           id: id,
           isControl: true,
           signalServer: this.config.signalServer,

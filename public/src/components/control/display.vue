@@ -18,6 +18,8 @@
 </template>
 
 <script>
+  import RTC from '../../RTC';
+
   export default {
     name: "display",
     props: ['se'],
@@ -56,6 +58,15 @@
         }, 100);
       }
     },
+    data: () => ({
+      video: false,
+      power: 0,
+      leftCat: 0,
+      rightCat: 0,
+      forward: 0,
+      back: 0,
+      channel: null
+    }),
     watch: {
       channel: function () {
         if (this.channel) {
@@ -65,28 +76,28 @@
     },
     created() {
       console.log(window.webrtc);
-      // this.webrtc = new RTC(true, srcObject => {
-      //   this.video = true;
-      //   this.$refs.video.srcObject = srcObject;
-      //   this.$refs.video.play();
-      // }, dataChannel => this.channel = dataChannel);
-      // document.querySelector('body').addEventListener("wheel", this.powerChange);
-      // document.addEventListener("keyup", event => {
-      //   if (event.isComposing || event.keyCode === 229) {
-      //     return;
-      //   }
-      //
-      //   if (event.keyCode === 87) this.forward = 0;
-      //   if (event.keyCode === 83) this.back = 0;
-      // });
-      // document.addEventListener("keydown", event => {
-      //   if (event.isComposing || event.keyCode === 229) {
-      //     return;
-      //   }
-      //   if (event.keyCode === 87) this.forward = 1;
-      //   if (event.keyCode === 83) this.back = -1;
-      //   //console.log(event);
-      // });
+      this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
+        this.video = true;
+        this.$refs.video.srcObject = srcObject;
+        this.$refs.video.play();
+      }, dataChannel => this.channel = dataChannel);
+      document.querySelector('body').addEventListener("wheel", this.powerChange);
+      document.addEventListener("keyup", event => {
+        if (event.isComposing || event.keyCode === 229) {
+          return;
+        }
+
+        if (event.keyCode === 87) this.forward = 0;
+        if (event.keyCode === 83) this.back = 0;
+      });
+      document.addEventListener("keydown", event => {
+        if (event.isComposing || event.keyCode === 229) {
+          return;
+        }
+        if (event.keyCode === 87) this.forward = 1;
+        if (event.keyCode === 83) this.back = -1;
+        //console.log(event);
+      });
     },
     mounted() {
       this.balanceWidth = this.$refs.balance.offsetWidth;

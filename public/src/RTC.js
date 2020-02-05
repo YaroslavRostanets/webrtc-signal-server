@@ -65,6 +65,7 @@ export default class RTC {
   }
 
   async createOffer() {
+    console.log('createOffer');
     return this.pc.createOffer({offerToReceiveVideo: true})
       .then(offer => {
       this.pc.setLocalDescription(offer);
