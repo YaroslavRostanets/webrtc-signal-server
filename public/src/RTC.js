@@ -1,12 +1,12 @@
-import SignalEmitter from './SignalEmitter.js';
+
 //import {platformSocket} from './platformSocket.js';
 import {config} from './rtcConfig.js';
 
 export default class RTC {
-  constructor(options, videoStreamCallback, dataChannelCallback) {
-    const {isControl, signalServer, id} = options;
+  constructor(options, signalEmitter, videoStreamCallback, dataChannelCallback) {
+    const {isControl} = options;
     this.isControl = isControl;
-    this.SE = new SignalEmitter(options);
+    this.SE = signalEmitter;
     this.videoStreamCallback = videoStreamCallback;
     this.dataChannelCallback = dataChannelCallback;
     this.pc = new RTCPeerConnection(config);
@@ -22,11 +22,12 @@ export default class RTC {
       console.log('Disconnected');
     };
     this.pc.addEventListener('track', e => {
+      this.videoStream = e.streams[0];
       this.videoStreamCallback(e.streams[0]);
     });
     if (isControl) {
       this.channel = this.pc.createDataChannel('RTCDataChannel');
-      this.channel.onopen = () => this.dataChannelCallback(this.channel);
+      this.channel.onopen = () => this.channel.onopen = () => this.dataChannelCallback(this.channel);
       this.channel.onclose = () => console.log('Channel closed');
       this.channel.onerror = err => console.log('Channel error:', err);
       this.channel.onmessage = e => console.log('Incoming message:', e.data);

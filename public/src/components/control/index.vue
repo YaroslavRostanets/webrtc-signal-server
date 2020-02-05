@@ -1,34 +1,37 @@
 <template>
-  <auth @submit="connect"></auth>
+  <display :se="se" v-if="isConnect"></display>
+  <auth v-else @submit="connect"></auth>
 </template>
 
 <script>
   import { mapState, mapMutations } from 'vuex';
+  import SignalEmitter from '../../SignalEmitter';
   import RTC from '../../RTC';
   import auth from './auth';
+  import display from './display';
   import store from '../../configureStore';
 
   export default {
     name: "control",
     store: store,
     components: {
-      auth
+      auth,
+      display
     },
     computed: mapState(['config', 'isConnect']),
     methods: {
       ...mapMutations(['setAuth']),
       connect(id) {
-        this.webrtc = new RTC({
+        this.SE = new SignalEmitter({
+          id: id,
           isControl: true,
           signalServer: this.config.signalServer,
-          id: id
         });
 
-        this.webrtc.SE.connection.onopen = () => {}
+        this.se.connection.onopen = () => store.commit('setAuth', true);
       },
     },
     created() {
-      console.log('la-');
       fetch(`${window.location.origin}/config.json`)
         .then(res => res.json())
         .then(config => {

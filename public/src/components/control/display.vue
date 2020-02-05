@@ -20,6 +20,7 @@
 <script>
   export default {
     name: "display",
+    props: ['se'],
     methods: {
       connect() {
         this.webrtc.createOffer();
@@ -63,28 +64,29 @@
       }
     },
     created() {
-      this.webrtc = new RTC(true, srcObject => {
-        this.video = true;
-        this.$refs.video.srcObject = srcObject;
-        this.$refs.video.play();
-      }, dataChannel => this.channel = dataChannel);
-      document.querySelector('body').addEventListener("wheel", this.powerChange);
-      document.addEventListener("keyup", event => {
-        if (event.isComposing || event.keyCode === 229) {
-          return;
-        }
-
-        if (event.keyCode === 87) this.forward = 0;
-        if (event.keyCode === 83) this.back = 0;
-      });
-      document.addEventListener("keydown", event => {
-        if (event.isComposing || event.keyCode === 229) {
-          return;
-        }
-        if (event.keyCode === 87) this.forward = 1;
-        if (event.keyCode === 83) this.back = -1;
-        //console.log(event);
-      });
+      console.log(window.webrtc);
+      // this.webrtc = new RTC(true, srcObject => {
+      //   this.video = true;
+      //   this.$refs.video.srcObject = srcObject;
+      //   this.$refs.video.play();
+      // }, dataChannel => this.channel = dataChannel);
+      // document.querySelector('body').addEventListener("wheel", this.powerChange);
+      // document.addEventListener("keyup", event => {
+      //   if (event.isComposing || event.keyCode === 229) {
+      //     return;
+      //   }
+      //
+      //   if (event.keyCode === 87) this.forward = 0;
+      //   if (event.keyCode === 83) this.back = 0;
+      // });
+      // document.addEventListener("keydown", event => {
+      //   if (event.isComposing || event.keyCode === 229) {
+      //     return;
+      //   }
+      //   if (event.keyCode === 87) this.forward = 1;
+      //   if (event.keyCode === 83) this.back = -1;
+      //   //console.log(event);
+      // });
     },
     mounted() {
       this.balanceWidth = this.$refs.balance.offsetWidth;

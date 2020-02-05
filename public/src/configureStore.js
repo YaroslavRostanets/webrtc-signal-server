@@ -13,8 +13,8 @@ const store = new Vuex.Store({
     setConfig(state, config) {
       state.config = config;
     },
-    setAuth(state) {
-      state.isConnect = true;
+    setAuth(state, value) {
+      state.isConnect = value;
     }
   }
 });
