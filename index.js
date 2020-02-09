@@ -6,30 +6,26 @@ const fs = require('fs');
 const url = require('url');
 const routeParser = require('./routeParser');
 const { trim } = require('./functions');
+const { PLATFORM, CONTROL } = require('./constants.js');
 
 const file = new(static.Server)('./public');
 
-Array.prototype.removeEl = function(el) {
-  const index = this.findIndex(item => el === item);
-  if (~index) this.slice(index, 1);
-};
-Array.prototype.allExcept = function(el) {
-  return this.filter(item => item !== el);
-};
-
 global.conformitys = {
   set(device, id, ws) {
-    console.log(device, id, ws);
-    if (!this.id) this[id] = {};
-    console.log(this);
+    if (!this[id]) this[id] = {};
     this[id][device] = ws;
+    console.table(global.conformitys);
   },
   unset(device, id) {
     delete this[id][device];
     if (!Object.keys(this[id]).length) delete this[id];
-    console.log('RESULT: ', this);
+    console.table(global.conformitys);
   }
 };
+
+setInterval(() => {
+  console.table(global.conformitys);
+}, 30000)
 
 http.createServer(function (req, res) {
   if (routeParser(req, res)) return;
@@ -50,22 +46,21 @@ const httpsServer = https.createServer(options, function (req, res) {
 const wss = new ws.Server({ server: httpsServer });
 
 const connectionHandler = (ws, req) => {
-  console.log(`Conn Url ${req.url}`);
   const parsedURL = url.parse(req.url, true);
   const {id} = parsedURL.query;
-  const device = trim(parsedURL.pathname, '/') === 'platform' ? 'platform' : 'control';
-  if (device === 'platform') {
-    global.conformitys.set('platform', id, ws);
+  const device = trim(parsedURL.pathname, '/') === PLATFORM ? PLATFORM : CONTROL;
+  if (device === PLATFORM) {
+    global.conformitys.set(PLATFORM, id, ws);
   } else {
-    global.conformitys.set('control', id, ws);
+    global.conformitys.set(CONTROL, id, ws);
   }
-  console.log(global.conformitys);
-  ws.on('message', message => messageHandler(message, ws));
+  ws.on('message', message => messageHandler(id, device, message, ws));
   ws.onclose = () => global.conformitys.unset(device, id);
 }
 
 wss.on('connection', connectionHandler);
 
-const messageHandler = (message, ws) => {
-  sockets.allExcept(ws).forEach( socket => socket.send(message));
+const messageHandler = (id, device, message, ws) => {
+  const socket = global.conformitys[id][device === PLATFORM ? CONTROL : PLATFORM];
+  if (socket) socket.send(message);
 };

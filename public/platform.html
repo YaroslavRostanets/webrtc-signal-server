@@ -10,11 +10,13 @@
 </div>
 <script type=module>
     import RTC from './src/RTC.js';
-    import SignalEmitter from './src/SignalEmitter';
+    import SignalEmitter from './src/SignalEmitter.js';
     import config from './config.js';
 
+    const searchParams = new URLSearchParams(window.location.search);
+    
     const se = new SignalEmitter({
-        id: id,
+        id: searchParams.get('id'),
         isControl: false,
         signalServer: config.signalServer,
     });
