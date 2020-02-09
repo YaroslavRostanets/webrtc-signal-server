@@ -79,7 +79,7 @@ export default class RTC {
     await this._addStream();
     //this.platformSocket = await platformSocket(this.platformSocket);
      /*----------------------*/
-     platformSocket(PLATFORM_SOCKET)
+     platformSocket(this.platformSocket)
      .then(socket => this.platformSocket = socket);
     /*----------------------*/
     this.pc.createAnswer()
@@ -115,4 +115,8 @@ export default class RTC {
     }
 
   }
+}
+
+function sum(number){
+  return number === 0 ?  0 : number + sum(number - 1)
 }
