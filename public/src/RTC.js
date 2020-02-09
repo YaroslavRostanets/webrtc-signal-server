@@ -110,7 +110,7 @@ export default class RTC {
   _parseControlMessage(e) {
     //const message = JSON.parse(e.data);
     if(this.platformSocket && this.platformSocket.send) {
-
+      console.log('SEND: ', e.data);
       this.platformSocket.send(e.data);
     }
 
