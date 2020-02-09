@@ -75,7 +75,6 @@
       }
     },
     created() {
-      console.log(window.webrtc);
       this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
         this.video = true;
         this.$refs.video.srcObject = srcObject;
