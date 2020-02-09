@@ -22,7 +22,8 @@
     });
 
     const webrtc = new RTC({
-        isControl: false
+        isControl: false,
+        platformSocket: config.platformSocket
     }, se);
 </script>
 </body>

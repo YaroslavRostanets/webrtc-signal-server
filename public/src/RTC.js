@@ -1,5 +1,5 @@
 
-//import {platformSocket} from './platformSocket.js';
+import {platformSocket} from './platformSocket.js';
 import {config} from './rtcConfig.js';
 
 export default class RTC {
@@ -9,6 +9,7 @@ export default class RTC {
     this.SE = signalEmitter;
     this.videoStreamCallback = videoStreamCallback;
     this.dataChannelCallback = dataChannelCallback;
+    this.platformSocket = options.platformSocket;
     this.pc = new RTCPeerConnection(config);
     this.pc.onicecandidate = evt => {
       if(evt.candidate) {
@@ -22,7 +23,6 @@ export default class RTC {
       console.log('Disconnected');
     };
     this.pc.addEventListener('track', e => {
-      this.videoStream = e.streams[0];
       this.videoStreamCallback(e.streams[0]);
     });
     if (isControl) {
@@ -77,10 +77,10 @@ export default class RTC {
 
   async createAnswer() {
     await this._addStream();
-    // this.platformSocket = await platformSocket(PLATFORM_SOCKET);
-    // /*----------------------*/
-    // platformSocket(PLATFORM_SOCKET)
-    // .then(socket => this.platformSocket = socket);
+    //this.platformSocket = await platformSocket(this.platformSocket);
+     /*----------------------*/
+     platformSocket(PLATFORM_SOCKET)
+     .then(socket => this.platformSocket = socket);
     /*----------------------*/
     this.pc.createAnswer()
       .then( answer => {

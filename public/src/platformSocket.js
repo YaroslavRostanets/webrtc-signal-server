@@ -1,5 +1,4 @@
 export const platformSocket = async function(url) {
-  console.log('TEST: ', url);
   return new Promise((resolve, reject) => {
     const socket = new WebSocket(url);
     socket.onopen = function() {
