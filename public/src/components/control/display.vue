@@ -1,6 +1,6 @@
 <template>
   <div v-else class="container">
-    <video width="800" ref="video"></video>
+    <video width="640" ref="video"></video>
     <div class="flex">
       <div class="col">
         <button @click="connect">CONNECT</button>
@@ -19,6 +19,8 @@
 
 <script>
   import RTC from '../../RTC';
+
+  const floor = num => Math.floor(num * 100) / 100;
 
   export default {
     name: "display",
@@ -49,13 +51,14 @@
         }
       },
       run() {
+
         setInterval(() => {
           const power = this.power * 0.01;
           const direction = this.forward || this.back;
           const left = floor(this.leftCat * direction * power);
           const right = floor(this.rightCat * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 100);
+        }, 1000);
       }
     },
     data: () => ({
@@ -95,7 +98,7 @@
         }
         if (event.keyCode === 87) this.forward = 1;
         if (event.keyCode === 83) this.back = -1;
-        //console.log(event);
+        console.log(event);
       });
     },
     mounted() {
