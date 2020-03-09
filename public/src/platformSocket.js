@@ -3,11 +3,12 @@ export const platformSocket = async function(url) {
   return new Promise((resolve, reject) => {
     const socket = new WebSocket(url);
     socket.onopen = function() {
+      console.log('WS OPENED');
       socket.send('[0, 0]');
       resolve(socket);
     };
     socket.onclose = function(event) {
-      console.log('close');
+      console.log('WS closed');
     };
 
     socket.onmessage = function(event) {
