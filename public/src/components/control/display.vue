@@ -1,17 +1,20 @@
 <template>
   <div v-else class="container">
-    <video width="800" ref="video"></video>
-    <div class="flex">
+    <div class="flex-center">
+      <div class="video-wrap">
+        <video ref="video"></video>
+        <balance-panel @upd="updBalance"></balance-panel>
+      </div>
+    </div>
+    <div class="info">
       <div class="col">
         <button @click="connect">CONNECT</button>
+        <button>FULL SCREEN</button>
         <table>
-          <tr><td>power: </td><td>{{power}}%</td></tr>
+          <tr><td>POWER: </td><td>{{power}}%</td></tr>
           <tr><td>left cat: </td><td>{{leftCat}}</td></tr>
           <tr><td>right cat: </td><td>{{rightCat}}</td></tr>
         </table>
-      </div>
-      <div class="col">
-        <div @mousemove="mouseMove" ref="balance" class="balance"></div>
       </div>
     </div>
   </div>
@@ -19,10 +22,22 @@
 
 <script>
   import RTC from '../../RTC';
+  import balancePanel from './balancePanel';
+
+  const floor = num => Math.floor(num * 100) / 100;
 
   export default {
     name: "display",
     props: ['se'],
+    data: () => ({
+      video: false,
+      power: 0,
+      leftCat: 0,
+      rightCat: 0,
+      forward: 0,
+      back: 0,
+      channel: null
+    }),
     methods: {
       connect() {
         this.webrtc.createOffer();
@@ -37,36 +52,21 @@
         }
         this.power = (power <= 100 && power >= 0) ? power : this.power;
       },
-      mouseMove(e) {
-        const x = e.layerX || e.offsetX;
-        const half = this.balanceWidth / 2;
-        if (x >= half) {
-          this.leftCat = 1;
-          this.rightCat = floor((this.balanceWidth - x) / (half / 100) / 100);
-        } else {
-          this.rightCat = 1;
-          this.leftCat = floor(x / (half / 100) / 100);
-        }
-      },
       run() {
+
         setInterval(() => {
           const power = this.power * 0.01;
           const direction = this.forward || this.back;
           const left = floor(this.leftCat * direction * power);
           const right = floor(this.rightCat * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 100);
+        }, 1000);
+      },
+      updBalance(balance) {
+        this.leftCat = balance.leftCat;
+        this.rightCat = balance.rightCat;
       }
     },
-    data: () => ({
-      video: false,
-      power: 0,
-      leftCat: 0,
-      rightCat: 0,
-      forward: 0,
-      back: 0,
-      channel: null
-    }),
     watch: {
       channel: function () {
         if (this.channel) {
@@ -95,15 +95,59 @@
         }
         if (event.keyCode === 87) this.forward = 1;
         if (event.keyCode === 83) this.back = -1;
-        //console.log(event);
+        console.log(event);
       });
     },
     mounted() {
       this.balanceWidth = this.$refs.balance.offsetWidth;
+    },
+    components: {
+      balancePanel
     }
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .flex-center {
+    display: flex;
+    justify-content: center;
+  }
+  .video-wrap {
+    border: 1px solid #00F601;
+    margin: 0 auto;
+    display: block;
+    position: relative;
+    margin-top: 4px;
+    height: 360px;
+    video {
+      height: 100%;
+    }
+    &:before {
+      content: "";
+      position: absolute;
+      left: -3px;
+      right: -3px;
+      top: -3px;
+      bottom: -3px;
+      border: 1px solid #00F601;
+    }
+  }
+  .info {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: 1px solid #00F601;
+    padding: 10px;
+    &:before {
+      content: "";
+      position: absolute;
+      left: -3px;
+      right: -3px;
+      top: -3px;
+      bottom: -3px;
+      border: 1px solid #00F601;
+      z-index: -1;
+    }
+  }
 
 </style>

@@ -27,7 +27,7 @@ export default class RTC {
     });
     if (isControl) {
       this.channel = this.pc.createDataChannel('RTCDataChannel');
-      this.channel.onopen = () => this.channel.onopen = () => this.dataChannelCallback(this.channel);
+      this.channel.onopen = () => this.dataChannelCallback(this.channel);
       this.channel.onclose = () => console.log('Channel closed');
       this.channel.onerror = err => console.log('Channel error:', err);
       this.channel.onmessage = e => console.log('Incoming message:', e.data);
