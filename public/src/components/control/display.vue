@@ -98,9 +98,6 @@
         console.log(event);
       });
     },
-    mounted() {
-      this.balanceWidth = this.$refs.balance.offsetWidth;
-    },
     components: {
       balancePanel
     }
