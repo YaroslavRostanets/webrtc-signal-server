@@ -77,7 +77,7 @@ export default class RTC {
 
   async createAnswer() {
     await this._addStream();
-    //this.platformSocket = await platformSocket(this.platformSocket);
+    this.platformSocket = await platformSocket(this.platformSocket);
      /*----------------------*/
      platformSocket(this.platformSocket)
      .then(socket => this.platformSocket = socket);
