@@ -94,7 +94,7 @@ export default class RTC {
     return navigator.mediaDevices.getUserMedia({video: true, audio: false})
       .then(stream => {
         stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
-        /*----------------------*/
+        /*--------------33--------*/
         const testVideo = document.querySelector('#test-video');
         if(testVideo) {
           testVideo.srcObject = stream;
