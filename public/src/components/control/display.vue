@@ -60,7 +60,7 @@
           const left = floor(this.leftCat * direction * power);
           const right = floor(this.rightCat * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 1000);
+        }, 100);
       },
       updBalance(balance) {
         this.leftCat = balance.leftCat;
@@ -115,7 +115,7 @@
     display: block;
     position: relative;
     margin-top: 4px;
-    height: 360px;
+    height: 480px;
     video {
       height: 100%;
     }
