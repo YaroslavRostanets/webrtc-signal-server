@@ -1,5 +1,5 @@
 <template>
-  <div v-else class="container">
+  <div class="container">
     <div class="flex-center">
       <div class="video-wrap">
         <video ref="video"></video>
