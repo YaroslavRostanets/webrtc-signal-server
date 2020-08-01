@@ -56,7 +56,8 @@
         direction: 0,
         drive: true,
         left: 0,
-        right: 0
+        right: 0,
+        channel: null
       }
     },
     computed: {
@@ -84,7 +85,7 @@
           const left = floor(this.left * direction * power);
           const right = floor(this.right * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 50);
+        }, 200);
       }
     },
     watch: {
