@@ -1,5 +1,8 @@
 <template>
-  <display :se="se" v-if="isConnect"></display>
+  <div v-if="isConnect">
+    <mobile-display :se="se" v-if="detectMob"></mobile-display>
+    <display :se="se" v-else></display>
+  </div>
   <auth v-else @submit="connect"></auth>
 </template>
 
@@ -9,6 +12,7 @@
   import RTC from '../../RTC';
   import auth from './auth';
   import display from './display';
+  import mobileDisplay from "./mobileDisplay";
   import store from '../../configureStore';
 
   export default {
@@ -16,9 +20,27 @@
     store: store,
     components: {
       auth,
-      display
+      display,
+      mobileDisplay
     },
-    computed: mapState(['config', 'isConnect']),
+    computed: {
+      ...mapState(['config', 'isConnect']),
+      detectMob() {
+        const toMatch = [
+          /Android/i,
+          /webOS/i,
+          /iPhone/i,
+          /iPad/i,
+          /iPod/i,
+          /BlackBerry/i,
+          /Windows Phone/i
+        ];
+
+        return toMatch.some((toMatchItem) => {
+          return navigator.userAgent.match(toMatchItem);
+        });
+      }
+    },
     methods: {
       ...mapMutations(['setAuth']),
       connect(id) {
