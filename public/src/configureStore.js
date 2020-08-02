@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    isConnect: false,
+    isConnect: true,
     config: {},
     error: null
   },
