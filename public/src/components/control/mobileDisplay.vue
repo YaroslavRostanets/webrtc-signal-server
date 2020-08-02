@@ -8,10 +8,10 @@
     </div>
     <div class="power-container stick-container">
       <vue-slider
-          :height="180"
+          :height="130"
           :width="16"
           :direction="'btt'"
-          :dotSize="45"
+          :dotSize="35"
           class="power-slider stick"
           v-model="power" />
     </div>
@@ -23,15 +23,14 @@
       <i class="arrow left"></i>
       <vue-slider
           @drag-end="dragEnd"
-          @dragging="dragging"
           :clickable="false"
           :tooltip="'none'"
           :min="-1"
           :max="1"
           :interval="0.01"
           :duration="0.15"
-          :width="180"
-          :dotSize="45"
+          :width="130"
+          :dotSize="35"
           class="direction-slider stick"
           v-model="direction" />
     </div>
@@ -72,9 +71,6 @@
       dragEnd(index) {
         this.direction = 0;
       },
-      dragging(value) {
-
-      },
       connect() {
         this.webrtc.createOffer();
       },
@@ -85,7 +81,7 @@
           const left = floor(this.left * direction * power);
           const right = floor(this.right * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 200);
+        }, 50);
       }
     },
     watch: {
@@ -166,10 +162,10 @@
     position: absolute;
     top: 50%;
     border: 2px solid #00F601;
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
-    margin-top: -100px;
+    margin-top: -70px;
   }
   .vue-slider-dot {
     width: 45px;
@@ -183,6 +179,7 @@
     right: 10px;
     top: 5px;
     font-size: 25px;
+    z-index: 1;
   }
   button {
     font-size: 24px;
