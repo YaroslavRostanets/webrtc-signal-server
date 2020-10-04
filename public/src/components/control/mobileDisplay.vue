@@ -72,7 +72,9 @@
           const direction = this.drive ? 1 : -1;
           const left = floor(this.left * direction * power);
           const right = floor(this.right * direction * power);
-          this.channel.send(JSON.stringify([left, right]));
+          /*console.log('POWER: ', power);
+          console.log('R: ', [left, right]);*/
+          //this.channel.send(JSON.stringify([left, right]));
         }, 100);
       },
       updateSlider: function updateSlider() {
@@ -107,6 +109,8 @@
     },
     mounted() {
 
+      this.run();
+
       noUiSlider.create(this.$refs['power-slider'], {
         start: 0,
         step: this.powerSlider.step,
@@ -123,6 +127,7 @@
         max: 1,
         step: 0.01,
         start: 0,
+        animate: false,
         range: {
           'min': -1,
           'max': 1
@@ -131,6 +136,10 @@
 
       this.$refs['power-slider'].noUiSlider.on('update',(values, handle) => {
         this.power = parseInt(values[handle]);
+      });
+
+      this.$refs['power-slider'].noUiSlider.on('end',() => {
+        this.$refs['power-slider'].noUiSlider.set(0);
       });
 
       this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => {
@@ -155,7 +164,7 @@
     margin: 0 auto;
     display: block;
     position: relative;
-    width: 480px;
+    width: 320px;
     video {
       height: 100%;
       width: 100%;
