@@ -15,18 +15,8 @@
     <div class="direction-container stick-container">
       <i class="arrow right"></i>
       <i class="arrow left"></i>
-      <vue-slider
-          @drag-end="dragEnd"
-          :clickable="false"
-          :tooltip="'none'"
-          :min="-1"
-          :max="1"
-          :interval="0.01"
-          :duration="0.15"
-          :width="130"
-          :dotSize="35"
-          class="direction-slider stick"
-          v-model="direction" />
+      <div id="balance-slider" ref="balance-slider"></div>
+
     </div>
   </div>
 </template>
@@ -83,7 +73,7 @@
           const left = floor(this.left * direction * power);
           const right = floor(this.right * direction * power);
           this.channel.send(JSON.stringify([left, right]));
-        }, 50);
+        }, 100);
       },
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
@@ -128,8 +118,27 @@
         }
       });
 
+      noUiSlider.create(this.$refs['balance-slider'], {
+        min: -1,
+        max: 1,
+        step: 0.01,
+        start: 0,
+        range: {
+          'min': -1,
+          'max': 1
+        }
+      });
+
       this.$refs['power-slider'].noUiSlider.on('update',(values, handle) => {
-        this.power = this[handle ? 'maxRange' : 'minRange'] = parseInt(values[handle]);
+        this.power = parseInt(values[handle]);
+      });
+
+      this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => {
+        this.direction = parseFloat(values[handle]);
+      });
+
+      this.$refs['balance-slider'].noUiSlider.on('end', () => {
+        this.$refs['balance-slider'].noUiSlider.set(0);
       });
 
     },
@@ -211,6 +220,9 @@
   #power-slider {
     margin: 0 auto;
     height: 150px;
+  }
+  #balance-slider {
+    width: 150px;
   }
 </style>
 
