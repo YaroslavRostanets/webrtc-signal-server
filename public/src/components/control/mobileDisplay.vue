@@ -7,13 +7,7 @@
       <button @click="connect">CONNECT</button>
     </div>
     <div class="power-container stick-container">
-      <vue-slider
-          :height="130"
-          :width="16"
-          :direction="'btt'"
-          :dotSize="35"
-          class="power-slider stick"
-          v-model="power" />
+      <div id="power-slider" ref="power-slider"></div>
     </div>
     <div class="video-wrap" :style="{height: height + 'px'}">
       <video ref="video" :height="height"></video>
@@ -43,6 +37,8 @@
   import 'vue-slider-component/theme/antd.css';
   import '../../assets/thema.scss';
   import RTC from "../../RTC";
+  import * as noUiSlider from 'nouislider/distribute/nouislider.js';
+  import '../../assets/nouislider.css';
 
   const floor = num => Math.floor(num * 100) / 100;
 
@@ -56,7 +52,13 @@
         drive: true,
         left: 0,
         right: 0,
-        channel: null
+        channel: null,
+        powerSlider: {
+          min: 0,
+          max: 100,
+          start: 0,
+          step: 1
+        }
       }
     },
     computed: {
@@ -82,6 +84,9 @@
           const right = floor(this.right * direction * power);
           this.channel.send(JSON.stringify([left, right]));
         }, 50);
+      },
+      updateSlider: function updateSlider() {
+        this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
       }
     },
     watch: {
@@ -109,6 +114,24 @@
         this.$refs.video.srcObject = srcObject;
         this.$refs.video.play();
       }, dataChannel => this.channel = dataChannel);
+    },
+    mounted() {
+
+      noUiSlider.create(this.$refs['power-slider'], {
+        start: 0,
+        step: this.powerSlider.step,
+        orientation: 'vertical',
+        direction: 'rtl',
+        range: {
+          'min': this.powerSlider.min,
+          'max': this.powerSlider.max
+        }
+      });
+
+      this.$refs['power-slider'].noUiSlider.on('update',(values, handle) => {
+        this.power = this[handle ? 'maxRange' : 'minRange'] = parseInt(values[handle]);
+      });
+
     },
     components: {
       VueSlider,
@@ -184,6 +207,10 @@
   button {
     font-size: 24px;
     margin-top: 6px;
+  }
+  #power-slider {
+    margin: 0 auto;
+    height: 150px;
   }
 </style>
 

@@ -25,7 +25,7 @@
           @blur="setFocus"
           ref="hash"
           type="text"
-          class="hide">
+          class="hide-t">
     </div>
   </div>
 </template>
