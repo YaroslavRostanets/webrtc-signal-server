@@ -9,14 +9,11 @@
     <div class="power-container stick-container">
       <div id="power-slider" ref="power-slider"></div>
     </div>
-    <div class="video-wrap" :style="{height: height + 'px'}">
+    <div class="video-wrap">
       <video ref="video" :height="height"></video>
     </div>
     <div class="direction-container stick-container">
-      <i class="arrow right"></i>
-      <i class="arrow left"></i>
       <div id="balance-slider" ref="balance-slider"></div>
-
     </div>
   </div>
 </template>
@@ -74,7 +71,7 @@
           const right = floor(this.right * direction * power);
           /*console.log('POWER: ', power);
           console.log('R: ', [left, right]);*/
-          //this.channel.send(JSON.stringify([left, right]));
+          this.channel.send(JSON.stringify([left, right]));
         }, 100);
       },
       updateSlider: function updateSlider() {
@@ -164,13 +161,13 @@
     margin: 0 auto;
     display: block;
     position: relative;
-    width: 320px;
+    width: 480px;
+    height: calc(100vh - 2px);
     video {
       height: 100%;
       width: 100%;
       position: static;
       display: block;
-      background: gray;
     }
     &:before {
     }
@@ -219,7 +216,7 @@
     position: absolute;
     right: 10px;
     top: 5px;
-    font-size: 25px;
+    font-size: 21px;
     z-index: 1;
   }
   button {
