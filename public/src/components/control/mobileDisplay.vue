@@ -106,8 +106,6 @@
     },
     mounted() {
 
-      this.run();
-
       noUiSlider.create(this.$refs['power-slider'], {
         start: 0,
         step: this.powerSlider.step,
