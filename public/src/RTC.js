@@ -38,7 +38,7 @@ export default class RTC {
         this.channel.onclose = () => console.log('Channel closed');
         this.channel.onerror = err => console.log('Channel error:', err);
         this.channel.onmessage = (e) => {
-          console.log('I: ', e.data);
+          console.log('MESS: ', e.data, new Date());
           this._parseControlMessage(e);
         };
       };
@@ -110,7 +110,7 @@ export default class RTC {
   _parseControlMessage(e) {
     //const message = JSON.parse(e.data);
     if(this.platformSocket && this.platformSocket.send) {
-      console.log('SEND: ', e.data);
+      //console.log('SEND: ', e.data);
       this.platformSocket.send(e.data);
     }
 
