@@ -73,7 +73,7 @@
           /*console.log('POWER: ', power);
           console.log('R: ', [left, right]);*/
           this.channel.send(JSON.stringify({
-            time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
+            //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [left, right]
           }));
         }, 100);

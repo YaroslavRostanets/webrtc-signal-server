@@ -38,8 +38,8 @@ export default class RTC {
         this.channel.onclose = () => console.log('Channel closed');
         this.channel.onerror = err => console.log('Channel error:', err);
         this.channel.onmessage = (e) => {
-          const now = new Date();
-          console.log('MESS: ', e.data, `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`);
+          //const now = new Date();
+          //console.log('MESS: ', e.data, `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`);
           this._parseControlMessage(e);
         };
       };
@@ -111,7 +111,7 @@ export default class RTC {
   _parseControlMessage(e) {
     const message = JSON.parse(e.data);
     if(this.platformSocket && this.platformSocket.send) {
-      console.log('SEND: ', message.data);
+      //console.log('SEND: ', message.data);
       this.platformSocket.send(JSON.stringify(message.data));
     }
 
