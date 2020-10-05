@@ -65,6 +65,7 @@
       },
       run() {
         setInterval(() => {
+          const now = new Date();
           const power = this.power * 0.01;
           const direction = this.drive ? 1 : -1;
           const left = floor(this.left * direction * power);
@@ -72,10 +73,10 @@
           /*console.log('POWER: ', power);
           console.log('R: ', [left, right]);*/
           this.channel.send(JSON.stringify({
-            time: new Date().toLocaleString(),
+            time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [left, right]
           }));
-        }, 100);
+        }, 80);
       },
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
