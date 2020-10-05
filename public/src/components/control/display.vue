@@ -55,11 +55,15 @@
       run() {
 
         setInterval(() => {
+          const now = new Date();
           const power = this.power * 0.01;
           const direction = this.forward || this.back;
           const left = floor(this.leftCat * direction * power);
           const right = floor(this.rightCat * direction * power);
-          this.channel.send(JSON.stringify([left, right]));
+          this.channel.send(JSON.stringify({
+            time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
+            data: [left, right]
+          }));
         }, 100);
       },
       updBalance(balance) {
