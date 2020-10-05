@@ -11,6 +11,16 @@ export const config = {
      url: 'turn:numb.viagenie.ca',
      credential: 'muazkh',
      username: 'webrtc@live.com'
+   },
+   {
+     url: 'turn:relay.backups.cz',
+     credential: 'webrtc',
+     username: 'webrtc'
+   },
+   {
+     url: 'turn:relay.backups.cz?transport=tcp',
+     credential: 'webrtc',
+     username: 'webrtc'
    }
  ]
 };
