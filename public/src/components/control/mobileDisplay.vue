@@ -76,7 +76,7 @@
             time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [left, right]
           }));
-        }, 80);
+        }, 100);
       },
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
