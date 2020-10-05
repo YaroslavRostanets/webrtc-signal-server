@@ -71,7 +71,10 @@
           const right = floor(this.right * direction * power);
           /*console.log('POWER: ', power);
           console.log('R: ', [left, right]);*/
-          this.channel.send(JSON.stringify([left, right]));
+          this.channel.send(JSON.stringify({
+            time: new Date().toLocaleString(),
+            data: [left, right]
+          }));
         }, 100);
       },
       updateSlider: function updateSlider() {
