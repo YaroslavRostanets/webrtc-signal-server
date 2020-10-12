@@ -1,9 +1,13 @@
 <template>
-  <div v-if="isConnect">
-    <mobile-display :se="se" v-if="detectMob"></mobile-display>
-    <display :se="se" v-else></display>
+  <div>
+    <div v-if="isConnect">
+      <mobile-display :se="se" v-if="detectMob"></mobile-display>
+      <display :se="se" v-else></display>
+    </div>
+    <auth v-else @submit="connect"></auth>
+
+    <div v-if="fetching" class="fetching">LOADING...</div>
   </div>
-  <auth v-else @submit="connect"></auth>
 </template>
 
 <script>
@@ -24,7 +28,7 @@
       mobileDisplay
     },
     computed: {
-      ...mapState(['config', 'isConnect']),
+      ...mapState(['config', 'isConnect', 'fetching']),
       detectMob() {
         const toMatch = [
           /Android/i,
@@ -42,15 +46,19 @@
       }
     },
     methods: {
-      ...mapMutations(['setAuth']),
+      ...mapMutations(['setAuth', 'setFetching']),
       connect(id) {
+        this.setFetching(true);
         this.se = new SignalEmitter({
           id: id,
           isControl: true,
           signalServer: this.config.signalServer,
         });
 
-        this.se.connection.onopen = () => store.commit('setAuth', true);
+        this.se.connection.onopen = () => {
+          store.commit('setAuth', true);
+          this.setFetching(false);
+        };
       },
     },
     created() {
@@ -64,6 +72,16 @@
   }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+  .fetching {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>

@@ -96,11 +96,11 @@ export default class RTC {
       .then(stream => {
         stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
         /*--------------33--------*/
-        const testVideo = document.querySelector('#test-video');
+/*        const testVideo = document.querySelector('#test-video');
         if(testVideo) {
           testVideo.srcObject = stream;
           testVideo.play();
-        }
+        }*/
         /*----------------------*/
       })
       .catch(function(err) {
@@ -116,8 +116,4 @@ export default class RTC {
     }
 
   }
-}
-
-function sum(number){
-  return number === 0 ?  0 : number + sum(number - 1)
 }
