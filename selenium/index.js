@@ -5,8 +5,8 @@ const webdriver = require('selenium-webdriver'),
 const firefox = require('selenium-webdriver/firefox');
 
 var options = new firefox.Options();
-options.addPreference("permissions.default.microphone", 1);
-options.addPreference("permissions.default.camera", 1);
+options.setPreference("permissions.default.microphone", 1);
+options.setPreference("permissions.default.camera", 1);
 
 const driver = new webdriver.Builder()
   .forBrowser('firefox')
