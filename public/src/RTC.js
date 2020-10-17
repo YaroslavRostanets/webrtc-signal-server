@@ -19,8 +19,23 @@ export default class RTC {
     this.pc.onconnection = () => {
       console.log('Connection established');
     };
-    this.pc.onclosedconnection = () => {
-      console.log('Disconnected');
+    this.pc.onconnectionstatechange = ev => {
+      switch(this.pc.connectionState) {
+        case "connected":
+          console.log('connected');
+          break;
+        case "disconnected":
+          console.log('disconnected');
+          break;
+        case "closed":
+          console.log('closed');
+          break;
+        case "failed":
+          console.log('failed')
+          break;
+        default:
+          break;
+      }
     };
     this.pc.addEventListener('track', e => {
       this.videoStreamCallback(e.streams[0]);
@@ -30,7 +45,6 @@ export default class RTC {
       this.channel.onopen = () => this.dataChannelCallback(this.channel);
       this.channel.onclose = () => console.log('Channel closed');
       this.channel.onerror = err => console.log('Channel error:', err);
-      this.channel.onmessage = e => console.log('Incoming message:', e.data);
     } else {
       this.pc.ondatachannel = (e) => {
         this.channel = e.channel;
@@ -38,8 +52,6 @@ export default class RTC {
         this.channel.onclose = () => console.log('Channel closed');
         this.channel.onerror = err => console.log('Channel error:', err);
         this.channel.onmessage = (e) => {
-          //const now = new Date();
-          //console.log('MESS: ', e.data, `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`);
           this._parseControlMessage(e);
         };
       };
@@ -66,46 +78,27 @@ export default class RTC {
   }
 
   async createOffer() {
-    console.log('createOffer');
-    return this.pc.createOffer({offerToReceiveVideo: true})
-      .then(offer => {
-      this.pc.setLocalDescription(offer);
-      return offer;
-    })
-      .then(offer => this.SE.send('SDP', offer))
-      .catch(err => console.error(err));
+    const offer = await this.pc.createOffer({offerToReceiveVideo: true});
+    this.pc.setLocalDescription(offer);
+    this.SE.send('SDP', offer);
   }
 
   async createAnswer() {
     await this._addStream();
     this.platformSocket = await platformSocket(this.platformSocket);
-     /*--------------33--------*/
-     platformSocket(this.platformSocket)
-     .then(socket => this.platformSocket = socket);
-    /*----------------------*/
-    this.pc.createAnswer()
-      .then( answer => {
-        this.pc.setLocalDescription(answer);
-        return answer;
-      })
-      .then(answer => this.SE.send('SDP', answer))
+    const answer = await this.pc.createAnswer();
+    this.pc.setLocalDescription(answer);
+    this.SE.send('SDP', answer);
   }
 
   async _addStream() {
-    return navigator.mediaDevices.getUserMedia({video: true, audio: false})
-      .then(stream => {
-        stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
-        /*--------------33--------*/
-/*        const testVideo = document.querySelector('#test-video');
-        if(testVideo) {
-          testVideo.srcObject = stream;
-          testVideo.play();
-        }*/
-        /*----------------------*/
-      })
-      .catch(function(err) {
-        console.log(err);
-      });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+      stream.getTracks().forEach(track => this.pc.addTrack(track, stream));
+      return stream;
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   _parseControlMessage(e) {
