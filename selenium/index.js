@@ -7,7 +7,7 @@ const firefox = require('selenium-webdriver/firefox');
 var options = new firefox.Options();
 options.setPreference("permissions.default.microphone", 1);
 options.setPreference("permissions.default.camera", 1);
-options.setPreference("network.websocket.allowInsecureFromHTTPS", 1);
+options.setPreference("network.websocket.allowInsecureFromHTTPS", true);
 
 
 const driver = new webdriver.Builder()
