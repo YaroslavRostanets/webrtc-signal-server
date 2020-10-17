@@ -19,6 +19,8 @@
 </template>
 
 <script>
+  import { mapMutations } from 'vuex';
+  import store from '../../configureStore';
   import Switches from 'vue-switches';
   import VueSlider from 'vue-slider-component';
   import 'vue-slider-component/theme/antd.css';
@@ -31,6 +33,7 @@
 
   export default {
     name: "mobileDisplay",
+    store: store,
     props: ['se'],
     data() {
       return {
@@ -57,10 +60,12 @@
       }
     },
     methods: {
+      ...mapMutations(['setFetching']),
       dragEnd(index) {
         this.direction = 0;
       },
       connect() {
+        this.setFetching(true);
         this.webrtc.createOffer();
       },
       run() {
@@ -76,7 +81,7 @@
             //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [left, right]
           }));
-        }, 100);
+        }, 70);
       },
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
@@ -86,6 +91,7 @@
       channel() {
         if (this.channel) {
           this.run();
+          this.setFetching(false);
         }
       },
       direction(value) {
@@ -159,11 +165,11 @@
 
 <style lang="scss" scoped>
   .video-wrap {
-    border: 1px solid #00F601;
+    //border: 1px solid #00F601;
     margin: 0 auto;
     display: block;
     position: relative;
-    width: 480px;
+    //width: 480px;
     height: calc(100vh - 2px);
     video {
       height: 100%;
@@ -206,10 +212,6 @@
     height: 150px;
     border-radius: 50%;
     margin-top: -70px;
-  }
-  .vue-slider-dot {
-    width: 45px;
-    height: 45px;
   }
   .power-slider {
     margin: 10px auto;

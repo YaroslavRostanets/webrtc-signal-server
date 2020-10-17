@@ -1,37 +1,28 @@
 <template>
   <div class="wrap">
-    <pre>
-      ╔═══════════════════════════════════════════════════════════╗
-      ║                                                           ║
-      ║                                                           ║
-      ║                                                           ║
-      ║                                                           ║
-      ║                                                           ║
-      ║                                                           ║
-      ║                                                           ║
-      ╚═══════════════════════════════════════════════════════════╝
-    </pre>
-    <div class="content">
-      Enter HASH of your platform, please :
-      <div class="field">
-        <pre>░░░░░░░</pre>
-        <div class="stars">{{stars}}<span class="cursor">▐</span></div>
 
+    <div class="content">
+      <div class="border">
+        Enter HASH of your platform, please :
+        <div class="field">
+          <pre>░░░░░░░</pre>
+          <div class="stars">{{stars}}<span class="cursor">▐</span></div>
+        </div>
+        <input
+            v-model="pass"
+            :maxlength="4"
+            v-on:keyup.enter="submit"
+            @blur="setFocus"
+            ref="hash"
+            type="text"
+            class="hide">
       </div>
-      <input
-          v-model="pass"
-          :maxlength="4"
-          v-on:keyup.enter="submit"
-          @blur="setFocus"
-          ref="hash"
-          type="text"
-          class="hide-t">
     </div>
   </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import { mapState, mapMutations } from 'vuex';
   import store from '../../configureStore';
 
   export default {
@@ -55,7 +46,6 @@
         if (this.$refs['hash']) this.$refs['hash'].focus();
       },
       submit() {
-        console.log('submit: ', this.pass);
         this.$emit('submit', this.pass);
       }
     }
@@ -68,7 +58,7 @@
     width: 500px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 100px;
+    margin-top: 80px;
     .content {
       position: absolute;
       left: 60px;
@@ -93,7 +83,7 @@
     }
   }
   .hide {
-    //display: none;
+    display: none;
     opacity: 0;
     height: 0;
     width: 0;
@@ -101,5 +91,19 @@
   @keyframes cursor {
     0%   {opacity: 1;}
     100%  {opacity: 0;}
+  }
+  .border {
+    border: 1px solid #00F601;
+    padding: 20px;
+    position: relative;
+    &:before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      bottom: -4px;
+      left: -4px;
+      right: -4px;
+      border: 1px solid #00F601;
+    }
   }
 </style>

@@ -7,7 +7,8 @@ const store = new Vuex.Store({
   state: {
     isConnect: false,
     config: {},
-    error: null
+    error: null,
+    fetching: false
   },
   mutations: {
     setConfig(state, config) {
@@ -15,6 +16,9 @@ const store = new Vuex.Store({
     },
     setAuth(state, value) {
       state.isConnect = value;
+    },
+    setFetching(state, value) {
+      state.fetching = value;
     }
   }
 });
