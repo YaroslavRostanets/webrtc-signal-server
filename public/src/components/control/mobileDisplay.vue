@@ -73,13 +73,18 @@
           const now = new Date();
           const power = this.power * 0.01;
           const direction = this.drive ? 1 : -1;
-          const left = floor(this.left * direction * power);
-          const right = floor(this.right * direction * power);
-          /*console.log('POWER: ', power);
-          console.log('R: ', [left, right]);*/
+          let left = floor(this.left * direction * power);
+          let right = floor(this.right * direction * power);
+          const delta = left - right;
+          if (delta) {
+            const absDelta = Math.abs(delta);
+            if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
+            else right = right + absDelta > 1 ? 1: right + absDelta;
+          }
+          //console.log('R: ', [floor(left), floor(right)]);
           this.channel.send(JSON.stringify({
             //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
-            data: [left, right]
+            data: [floor(left), floor(right)]
           }));
         }, 70);
       },
