@@ -43,7 +43,10 @@
     computed: mapState(['config', 'isConnect']),
     methods: {
       setFocus() {
-        if (this.$refs['hash']) this.$refs['hash'].focus();
+        if (this.$refs['hash']) {
+          this.$refs['hash'].focus();
+          this.$refs['hash'].click();
+        }
       },
       submit() {
         this.$emit('submit', this.pass);

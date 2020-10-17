@@ -83,5 +83,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #000000;
   }
 </style>

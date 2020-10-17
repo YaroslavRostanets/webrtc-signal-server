@@ -11,7 +11,14 @@ const driver = new webdriver.Builder()
   .setFirefoxOptions(options)
   .build();
 
-driver.get('https://www.rtc-robot.ml/platform?1111');
+const script = async () => {
+  try {
+    driver.get('https://www.rtc-robot.ml/platform?id=1111');
+  } catch (err) {
+    console.error('ERR: ', err);
+  }
+}
+
 
 
 //driver.quit();
