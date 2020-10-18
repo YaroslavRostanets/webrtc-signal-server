@@ -9,7 +9,7 @@ export default class RTC {
     this.SE = signalEmitter;
     this.videoStreamCallback = videoStreamCallback;
     this.dataChannelCallback = dataChannelCallback;
-    this.platformSocket = options.platformSocket;
+    this.platformSocketUri = options.platformSocket;
     this.pc = new RTCPeerConnection(config);
     this.pc.onicecandidate = evt => {
       if(evt.candidate) {
@@ -85,7 +85,7 @@ export default class RTC {
 
   async createAnswer() {
     await this._addStream();
-    this.platformSocket = await platformSocket(this.platformSocket);
+    this.platformSocket = await platformSocket(this.platformSocketUri);
     const answer = await this.pc.createAnswer();
     this.pc.setLocalDescription(answer);
     this.SE.send('SDP', answer);
