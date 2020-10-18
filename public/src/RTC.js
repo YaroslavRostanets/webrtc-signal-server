@@ -14,6 +14,7 @@ export default class RTC {
     this.setConnectionState = setConnectionState;
 
     pcHandlers(this.pc, this);
+    seHandlers(this);
 
     if (isControl) {
       this.channel = this.pc.createDataChannel('RTCDataChannel');
@@ -29,17 +30,6 @@ export default class RTC {
         };
       };
     }
-    this.SE.on('SDP', sdp => {
-      console.log('SDP CANDIDATE: ', sdp);
-      this._setRemoteSDP(sdp);
-    });
-    this.SE.on('ICE', ice => {
-      console.log('ICE CANDIDATE: ', ice);
-      this.pc.addIceCandidate(new RTCIceCandidate(ice));
-    });
-    this.SE.on('ERROR', err => {
-      console.log('ERROR: ', err);
-    });
   }
 
   _setRemoteSDP(sdp) {
@@ -107,13 +97,23 @@ function pcHandlers(pc, _this) {
     if (_this.isControl) {
       _this.setConnectionState(_this.pc.connectionState);
     } else {
-      if (['disconnected', 'closed', 'failed'].some(state => _this.pc.connectionState)) {
+      if (['disconnected', 'closed', 'failed'].some(state => _this.pc.connectionState === state)) {
         window.location.reload();
       }
     }
   };
 }
 
-function seHandlers(se, _this) {
-
+function seHandlers(_this) {
+  _this.SE.on('SDP', sdp => {
+    console.log('SDP CANDIDATE: ', sdp);
+    _this._setRemoteSDP(sdp);
+  });
+  _this.SE.on('ICE', ice => {
+    console.log('ICE CANDIDATE: ', ice);
+    _this.pc.addIceCandidate(new RTCIceCandidate(ice));
+  });
+  _this.SE.on('ERROR', err => {
+    console.log('ERROR: ', err);
+  });
 }
