@@ -92,9 +92,9 @@ function pcHandlers(pc, _this) {
 
   _this.pc.onconnectionstatechange = ev => {
     if (_this.isControl) {
-      _this.setConnectionState(this.pc.connectionState);
+      _this.setConnectionState(_this.pc.connectionState);
     } else {
-      if (['disconnected', 'closed', 'failed'].some(state => this.pc.connectionState)) {
+      if (['disconnected', 'closed', 'failed'].some(state => _this.pc.connectionState)) {
         window.location.reload();
       }
     }
