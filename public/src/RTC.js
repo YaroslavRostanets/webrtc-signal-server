@@ -95,6 +95,7 @@ export default class RTC {
 
 function pcHandlers(pc, _this) {
   _this.pc.onicecandidate = evt => {
+    console.log('CANDIDATE: ', evt.candidate);
     if (evt.candidate) _this.SE.send('ICE', evt.candidate);
   };
 
