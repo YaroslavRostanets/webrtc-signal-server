@@ -3,7 +3,7 @@ import {platformSocket} from './platformSocket.js';
 import {config} from './rtcConfig.js';
 
 export default class RTC {
-  constructor(options, signalEmitter, videoStreamCallback, dataChannelCallback) {
+  constructor(options, signalEmitter, videoStreamCallback, dataChannelCallback, setConnectionState) {
     const {isControl} = options;
     this.isControl = isControl;
     this.SE = signalEmitter;
@@ -11,68 +11,33 @@ export default class RTC {
     this.dataChannelCallback = dataChannelCallback;
     this.platformSocketUri = options.platformSocket;
     this.pc = new RTCPeerConnection(config);
-    this.pc.onicecandidate = evt => {
-      if(evt.candidate) {
-        this.SE.send('ICE', evt.candidate);
-      }
-    };
-    this.pc.onconnection = () => {
-      console.log('Connection established');
-    };
-    this.pc.onconnectionstatechange = ev => {
-      switch(this.pc.connectionState) {
-        case "connected":
-          console.log('connected');
-          break;
-        case "disconnected":
-          console.log('disconnected');
-          break;
-        case "closed":
-          console.log('closed');
-          break;
-        case "failed":
-          console.log('failed')
-          break;
-        default:
-          break;
-      }
-    };
-    this.pc.addEventListener('track', e => {
-      this.videoStreamCallback(e.streams[0]);
-    });
+    this.setConnectionState = setConnectionState;
+
+    pcHandlers(this.pc, this);
+    seHandlers(this);
+
     if (isControl) {
       this.channel = this.pc.createDataChannel('RTCDataChannel');
       this.channel.onopen = () => this.dataChannelCallback(this.channel);
       this.channel.onclose = () => console.log('Channel closed');
-      this.channel.onerror = err => console.log('Channel error:', err);
     } else {
       this.pc.ondatachannel = (e) => {
         this.channel = e.channel;
         this.channel.onopen = () => console.log('Channel open');
         this.channel.onclose = () => console.log('Channel closed');
-        this.channel.onerror = err => console.log('Channel error:', err);
         this.channel.onmessage = (e) => {
           this._parseControlMessage(e);
         };
       };
     }
-    this.SE.on('SDP', sdp => {
-      console.log('SDP CANDIDATE: ', sdp);
-      this._setRemoteSDP(sdp);
-    });
-    this.SE.on('ICE', ice => {
-      console.log('ICE CANDIDATE: ', ice);
-      this.pc.addIceCandidate(new RTCIceCandidate(ice));
-    });
   }
 
   _setRemoteSDP(sdp) {
     this.pc.setRemoteDescription(new RTCSessionDescription(sdp), () => {
-      console.log('SET_REMOTE_DESC: ', sdp);
       if(this.pc.remoteDescription.type == 'offer') {
         this.createAnswer();
       }
-    }, (err) => {
+    }, err => {
       console.log('Failed to setRemoteDescription():', err);
     });
   }
@@ -84,11 +49,16 @@ export default class RTC {
   }
 
   async createAnswer() {
-    await this._addStream();
-    this.platformSocket = await platformSocket(this.platformSocketUri);
-    const answer = await this.pc.createAnswer();
-    this.pc.setLocalDescription(answer);
-    this.SE.send('SDP', answer);
+    try {
+      await this._addStream();
+      this.platformSocket = await platformSocket(this.platformSocketUri);
+      const answer = await this.pc.createAnswer();
+      this.pc.setLocalDescription(answer);
+      this.SE.send('SDP', answer);
+    } catch (err) {
+      console.error(err);
+      this.SE.send('ERROR', err);
+    }
   }
 
   async _addStream() {
@@ -98,6 +68,7 @@ export default class RTC {
       return stream;
     } catch (err) {
       console.error(err);
+      this.SE.send('ERROR', err);
     }
   }
 
@@ -107,6 +78,39 @@ export default class RTC {
       //console.log('SEND: ', message.data);
       this.platformSocket.send(JSON.stringify(message.data));
     }
-
   }
+}
+
+function pcHandlers(pc, _this) {
+  _this.pc.onicecandidate = evt => {
+    if (evt.candidate) _this.SE.send('ICE', evt.candidate);
+  };
+
+  _this.pc.onconnection = () => console.log('Connection established');
+
+  _this.pc.addEventListener('track', e => _this.videoStreamCallback(e.streams[0]));
+
+  _this.pc.onconnectionstatechange = ev => {
+    if (_this.isControl) {
+      _this.setConnectionState(this.pc.connectionState);
+    } else {
+      if (['disconnected', 'closed', 'failed'].some(state => this.pc.connectionState)) {
+        window.location.reload();
+      }
+    }
+  };
+}
+
+function seHandlers(_this) {
+  _this.SE.on('SDP', sdp => {
+    console.log('SDP CANDIDATE: ', sdp);
+    _this._setRemoteSDP(sdp);
+  });
+  _this.SE.on('ICE', ice => {
+    console.log('ICE CANDIDATE: ', ice);
+    _this.pc.addIceCandidate(new RTCIceCandidate(ice));
+  });
+  _this.SE.on('ERROR', err => {
+    console.log('ERROR: ', err);
+  });
 }
