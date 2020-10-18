@@ -4,6 +4,7 @@
     <div class="appliances">
       <div>POWER: {{power + '%'}}</div>
       <div>SELECTED GEAR: {{drive ? 'D' : 'R'}}</div>
+      <div>{{connectionState}}</div>
       <button @click="connect">CONNECT</button>
     </div>
     <div class="power-container stick-container">
@@ -19,7 +20,7 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex';
+  import { mapMutations, mapState } from 'vuex';
   import store from '../../configureStore';
   import Switches from 'vue-switches';
   import VueSlider from 'vue-slider-component';
@@ -52,6 +53,7 @@
       }
     },
     computed: {
+      ...mapState(['connectionState']),
       width() {
         return window.innerWidth;
       },
@@ -60,7 +62,7 @@
       }
     },
     methods: {
-      ...mapMutations(['setFetching']),
+      ...mapMutations(['setFetching', 'setConnectionState']),
       dragEnd(index) {
         this.direction = 0;
       },
@@ -81,7 +83,6 @@
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
           }
-          //console.log('R: ', [floor(left), floor(right)]);
           this.channel.send(JSON.stringify({
             //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [floor(left), floor(right)]
@@ -117,7 +118,7 @@
         this.video = true;
         this.$refs.video.srcObject = srcObject;
         this.$refs.video.play();
-      }, dataChannel => this.channel = dataChannel);
+      }, dataChannel => this.channel = dataChannel, this.setConnectionState);
     },
     mounted() {
 
