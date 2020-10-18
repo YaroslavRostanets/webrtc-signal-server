@@ -83,12 +83,10 @@
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
           }
-          if (this.connectionState === 'connected') {
-            this.channel.send(JSON.stringify({
-              //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
-              data: [floor(left), floor(right)]
-            }));
-          }
+          this.channel.send(JSON.stringify({
+            //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
+            data: [floor(left), floor(right)]
+          }));
         }, 70);
       },
       updateSlider: function updateSlider() {

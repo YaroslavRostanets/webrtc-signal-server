@@ -55,6 +55,7 @@ export default class RTC {
   async createOffer() {
     const offer = await this.pc.createOffer({offerToReceiveVideo: true});
     this.pc.setLocalDescription(offer);
+    console.log('SEND OFFER: ', offer);
     this.SE.send('SDP', offer);
   }
 
@@ -64,6 +65,7 @@ export default class RTC {
       this.platformSocket = await platformSocket(this.platformSocketUri);
       const answer = await this.pc.createAnswer();
       this.pc.setLocalDescription(answer);
+      console.log('SEND ANSWER: ', answer);
       this.SE.send('SDP', answer);
     } catch (err) {
       console.error(err);
