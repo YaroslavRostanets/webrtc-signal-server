@@ -16,7 +16,7 @@ export const platformSocket = async function(url) {
 
     socket.onerror = function(error) {
       console.log("Ошибка " + error.message);
-      reject(error.message);
+      reject(error.message || 'Platform socket not available');
     };
   });
 };

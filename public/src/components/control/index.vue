@@ -1,12 +1,14 @@
 <template>
   <div>
     <div v-if="isConnect">
-      <mobile-display :se="se" v-if="detectMob"></mobile-display>
-      <display :se="se" v-else></display>
+      <mobile-display :se="se" :webrtc="webrtc" v-if="detectMob"></mobile-display>
+      <display :se="se" :webrtc="webrtc" v-else></display>
     </div>
     <auth v-else @submit="connect"></auth>
 
     <div v-if="fetching" class="fetching">LOADING...</div>
+
+    <error-modal v-if="isNotConnected" />
   </div>
 </template>
 
@@ -17,6 +19,7 @@
   import auth from './auth';
   import display from './display';
   import mobileDisplay from "./mobileDisplay";
+  import errorModal from "./errorModal";
   import store from '../../configureStore';
 
   export default {
@@ -25,10 +28,11 @@
     components: {
       auth,
       display,
-      mobileDisplay
+      mobileDisplay,
+      errorModal
     },
     computed: {
-      ...mapState(['config', 'isConnect', 'fetching']),
+      ...mapState(['config', 'isConnect', 'fetching', 'connectionState']),
       detectMob() {
         const toMatch = [
           /Android/i,
@@ -43,6 +47,9 @@
         return toMatch.some((toMatchItem) => {
           return navigator.userAgent.match(toMatchItem);
         });
+      },
+      isNotConnected() {
+        return ['failed', 'closed', 'closed'].some(state => this.connectionState);
       }
     },
     methods: {
@@ -60,6 +67,13 @@
           this.setFetching(false);
         };
       },
+      createRTC() {
+        this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
+          this.video = true;
+          this.$refs.video.srcObject = srcObject;
+          this.$refs.video.play();
+        }, dataChannel => this.channel = dataChannel, this.setConnectionState);
+      }
     },
     created() {
       fetch(`${window.location.origin}/config.json`)
@@ -68,6 +82,7 @@
           console.log('CONFIG: ', config);
           store.commit('setConfig', config);
         });
+      this.createRTC();
     },
   }
 </script>
