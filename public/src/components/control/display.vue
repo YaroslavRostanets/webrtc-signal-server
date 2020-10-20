@@ -28,7 +28,7 @@
 
   export default {
     name: "display",
-    props: ['se'],
+    props: ['se', 'webrtc'],
     data: () => ({
       video: false,
       power: 0,

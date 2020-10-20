@@ -35,7 +35,7 @@
   export default {
     name: "mobileDisplay",
     store: store,
-    props: ['se'],
+    props: ['se', 'webrtc'],
     data() {
       return {
         power: 0,
@@ -91,7 +91,8 @@
       },
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
-      }
+      },
+
     },
     watch: {
       channel() {
@@ -112,13 +113,6 @@
           this.right = 1;
         }
       }
-    },
-    created() {
-      this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
-        this.video = true;
-        this.$refs.video.srcObject = srcObject;
-        this.$refs.video.play();
-      }, dataChannel => this.channel = dataChannel, this.setConnectionState);
     },
     mounted() {
 
