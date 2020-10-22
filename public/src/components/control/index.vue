@@ -64,10 +64,12 @@
 
         this.se.connection.onopen = () => {
           store.commit('setAuth', true);
+          this.createRTC();
           this.setFetching(false);
         };
       },
       createRTC() {
+        console.log('SE: ', this.se);
         this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
           this.video = true;
           this.$refs.video.srcObject = srcObject;
@@ -82,7 +84,6 @@
           console.log('CONFIG: ', config);
           store.commit('setConfig', config);
         });
-      this.createRTC();
     },
   }
 </script>
