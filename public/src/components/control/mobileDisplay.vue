@@ -35,7 +35,7 @@
   export default {
     name: "mobileDisplay",
     store: store,
-    props: ['se', 'webrtc'],
+    props: ['se', 'webrtc', 'create-rtc'],
     data() {
       return {
         power: 0,
