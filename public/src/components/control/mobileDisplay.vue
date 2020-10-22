@@ -16,6 +16,10 @@
     <div class="direction-container stick-container">
       <div id="balance-slider" ref="balance-slider"></div>
     </div>
+    <div class="turn-container">
+      <a v-touch:start="turnLeft" v-touch:end="endHandler" class="std-btn">LEFT</a>
+      <a v-touch:start="turnRight" v-touch:end="endHandler" class="std-btn">RIGHT</a>
+    </div>
   </div>
 </template>
 
@@ -43,13 +47,7 @@
         drive: true,
         left: 0,
         right: 0,
-        channel: null,
-        powerSlider: {
-          min: 0,
-          max: 100,
-          start: 0,
-          step: 1
-        }
+        channel: null
       }
     },
     computed: {
@@ -92,7 +90,18 @@
       updateSlider: function updateSlider() {
         this.$refs['power-slider'].noUiSlider.set([this.minRange, this.maxRange]);
       },
-
+      turnLeft() {
+        this.right = 1;
+        this.left = -1;
+      },
+      turnRight() {
+        this.left = -1;
+        this.right = 1;
+      },
+      endHandler() {
+        this.left = 1;
+        this.right = 1;
+      }
     },
     watch: {
       videoStream(stream) {
@@ -124,12 +133,12 @@
 
       noUiSlider.create(this.$refs['power-slider'], {
         start: 0,
-        step: this.powerSlider.step,
+        step: 1,
         orientation: 'vertical',
         direction: 'rtl',
         range: {
-          'min': this.powerSlider.min,
-          'max': this.powerSlider.max
+          min: 0,
+          max: 100
         }
       });
 
@@ -140,26 +149,16 @@
         start: 0,
         animate: false,
         range: {
-          'min': -1,
-          'max': 1
+          min: -1,
+          max: 1
         }
       });
 
-      this.$refs['power-slider'].noUiSlider.on('update',(values, handle) => {
-        this.power = parseInt(values[handle]);
-      });
+      this.$refs['power-slider'].noUiSlider.on('update',(values, handle) => this.power = parseInt(values[handle]));
+      this.$refs['power-slider'].noUiSlider.on('end',() => this.$refs['power-slider'].noUiSlider.set(0));
 
-      this.$refs['power-slider'].noUiSlider.on('end',() => {
-        this.$refs['power-slider'].noUiSlider.set(0);
-      });
-
-      this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => {
-        this.direction = parseFloat(values[handle]);
-      });
-
-      this.$refs['balance-slider'].noUiSlider.on('end', () => {
-        this.$refs['balance-slider'].noUiSlider.set(0);
-      });
+      this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => this.direction = parseFloat(values[handle]));
+      this.$refs['balance-slider'].noUiSlider.on('end', () => this.$refs['balance-slider'].noUiSlider.set(0));
 
     },
     components: {
@@ -175,7 +174,7 @@
     margin: 0 auto;
     display: block;
     position: relative;
-    //width: 480px;
+    width: 480px;
     height: calc(100vh - 2px);
     video {
       height: 100%;
@@ -239,6 +238,32 @@
   }
   #balance-slider {
     width: 150px;
+  }
+  .turn-container {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    .std-btn {
+      width: 80px;
+      height: 35px;
+      border: 1px solid #00F601;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      color: #000000;
+      text-decoration: none;
+      background: #00F601;
+      margin-right: 1px;
+      &:last-child {
+        margin-right: 0;
+      }
+      &:active {
+        background: #000000;
+        color: #00F601;
+      }
+    }
   }
 </style>
 

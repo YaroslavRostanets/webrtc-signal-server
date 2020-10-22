@@ -89,7 +89,7 @@
     },
     watch: {
       connectionState(conState) {
-        return ['failed', 'closed'].some(state => state === conState);
+        return ['failed', 'closed', 'disconnected'].some(state => state === conState);
       }
     }
   }
