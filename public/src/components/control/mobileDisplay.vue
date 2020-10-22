@@ -35,7 +35,7 @@
   export default {
     name: "mobileDisplay",
     store: store,
-    props: ['se', 'webrtc', 'create-rtc'],
+    props: ['se', 'webrtc', 'videoStream'],
     data() {
       return {
         power: 0,
@@ -95,6 +95,12 @@
 
     },
     watch: {
+      videoStream(stream) {
+        if (stream) {
+          this.$refs.video.srcObject = stream;
+          this.$refs.video.play();
+        }
+      },
       channel() {
         if (this.channel) {
           this.run();
