@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isConnect">
-      <mobile-display :se="se" :webrtc="webrtc" v-if="detectMob"></mobile-display>
+      <mobile-display :se="se" :webrtc="webrtc" :videoStream="videoStream" v-if="detectMob"></mobile-display>
       <display :se="se" :webrtc="webrtc" v-else></display>
     </div>
     <auth v-else @submit="connect"></auth>
@@ -30,6 +30,11 @@
       display,
       mobileDisplay,
       errorModal
+    },
+    data() {
+      return {
+        videoStream: null
+      }
     },
     computed: {
       ...mapState(['config', 'isConnect', 'fetching', 'connectionState']),
@@ -71,9 +76,7 @@
       createRTC() {
         console.log('SE: ', this.se);
         this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
-          this.video = true;
-          this.$refs.video.srcObject = srcObject;
-          this.$refs.video.play();
+          this.videoStream = srcObject;
         }, dataChannel => this.channel = dataChannel, this.setConnectionState);
       }
     },
