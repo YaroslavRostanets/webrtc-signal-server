@@ -8,7 +8,7 @@
 
     <div v-if="fetching" class="fetching">LOADING...</div>
 
-    <error-modal v-if="isNotConnected" />
+    <error-modal v-if="isConnError" />
   </div>
 </template>
 
@@ -33,7 +33,8 @@
     },
     data() {
       return {
-        videoStream: null
+        videoStream: null,
+        isConnError: false
       }
     },
     computed: {
@@ -52,9 +53,6 @@
         return toMatch.some((toMatchItem) => {
           return navigator.userAgent.match(toMatchItem);
         });
-      },
-      isNotConnected() {
-        return ['failed', 'closed', 'closed'].some(state => this.connectionState);
       }
     },
     methods: {
@@ -77,6 +75,7 @@
         console.log('SE: ', this.se);
         this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
           this.videoStream = srcObject;
+          this.setFetching(false);
         }, dataChannel => this.channel = dataChannel, this.setConnectionState);
       }
     },
@@ -88,6 +87,11 @@
           store.commit('setConfig', config);
         });
     },
+    watch: {
+      connectionState(conState) {
+        return ['failed', 'closed'].some(state => state === conState);
+      }
+    }
   }
 </script>
 
