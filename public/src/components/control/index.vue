@@ -53,7 +53,7 @@
       }
     },
     methods: {
-      ...mapMutations(['setAuth', 'setFetching']),
+      ...mapMutations(['setAuth', 'setFetching', 'setConnectionState']),
       connect(id) {
         this.setFetching(true);
         this.se = new SignalEmitter({

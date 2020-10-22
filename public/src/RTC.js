@@ -52,7 +52,7 @@ export default class RTC {
   async createAnswer() {
     try {
       await this._addStream();
-      this.platformSocket = await platformSocket(this.platformSocketUri);
+      this.platformSocket = platformSocket(this.platformSocketUri);
       const answer = await this.pc.createAnswer();
       this.pc.setLocalDescription(answer);
       console.log('SEND ANSWER: ', answer);
