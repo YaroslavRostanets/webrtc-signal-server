@@ -50,9 +50,9 @@ export default class RTC {
   }
 
   async createAnswer() {
-    this.platformSocket = await platformSocket(this.platformSocketUri);
     try {
       await this._addStream();
+      this.platformSocket = await platformSocket(this.platformSocketUri);
       const answer = await this.pc.createAnswer();
       this.pc.setLocalDescription(answer);
       console.log('SEND ANSWER: ', answer);
@@ -77,7 +77,7 @@ export default class RTC {
   _parseControlMessage(e) {
     const message = JSON.parse(e.data);
     if(this.platformSocket && this.platformSocket.send) {
-      //console.log('SEND: ', message.data);
+      console.log('SEND: ', message.data);
       this.platformSocket.send(JSON.stringify(message.data));
     }
   }
