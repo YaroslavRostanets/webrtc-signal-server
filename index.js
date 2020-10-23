@@ -17,9 +17,13 @@ global.conformitys = {
     console.table(global.conformitys);
   },
   unset(device, id) {
-    delete this[id][device];
-    if (!Object.keys(this[id]).length) delete this[id];
-    console.table(global.conformitys);
+    try {
+      delete this[id][device];
+      if (!Object.keys(this[id]).length) delete this[id];
+      console.log('RESULT: ', this);
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 
@@ -54,8 +58,12 @@ const connectionHandler = (ws, req) => {
   } else {
     global.conformitys.set(CONTROL, id, ws);
   }
-  ws.on('message', message => messageHandler(id, device, message, ws));
-  ws.onclose = () => global.conformitys.unset(device, id);
+  console.log(global.conformitys);
+  ws.on('message', message => messageHandler(message, ws));
+  ws.onclose = () => {
+    sockets.allExcept(ws).forEach( socket => socket.send('DISCONNECT'));
+    global.conformitys.unset(device, id);
+  };
 }
 
 wss.on('connection', connectionHandler);

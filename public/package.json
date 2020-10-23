@@ -10,8 +10,6 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "@cubejs-client/core": "0.10.16",
-    "@cubejs-client/vue": "0.10.24",
     "@tinymce/tinymce-vue": "3.0.1",
     "babel-polyfill": "^6.26.0",
     "core-js": "2.6.5",
