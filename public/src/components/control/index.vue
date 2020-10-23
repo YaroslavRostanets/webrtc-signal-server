@@ -98,7 +98,8 @@
     watch: {
       connectionState(conState) {
         console.log('CON_STATE: ', conState);
-        return ['failed', 'closed', 'disconnected'].some(state => state === conState);
+        this.isConnError = ['failed', 'closed', 'disconnected'].some(state => state === conState);
+
       }
     }
   }
