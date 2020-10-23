@@ -82,6 +82,8 @@
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
           }
+
+          //console.log('T: ', [floor(left), floor(right)]);
           this.dataChannel.send(JSON.stringify({
             //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [floor(left), floor(right)]
@@ -96,8 +98,8 @@
         this.left = -1;
       },
       turnRight() {
-        this.left = -1;
-        this.right = 1;
+        this.left = 1;
+        this.right = -1;
       },
       endHandler() {
         this.left = 1;
@@ -167,6 +169,7 @@
       this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => this.direction = parseFloat(values[handle]));
       this.$refs['balance-slider'].noUiSlider.on('end', () => this.$refs['balance-slider'].noUiSlider.set(0));
 
+      this.run();
     },
     components: {
       VueSlider,

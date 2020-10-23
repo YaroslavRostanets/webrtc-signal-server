@@ -28,6 +28,9 @@ export default class RTC {
         this.channel.onmessage = (e) => {
           this._parseControlMessage(e);
         };
+        setTimeout(() => {
+          console.log('STATE: ', this.pc.iceConnectionState);
+        }, 5000);
       };
     }
   }
