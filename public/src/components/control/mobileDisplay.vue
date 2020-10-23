@@ -77,7 +77,7 @@
           let left = floor(this.left * direction * power);
           let right = floor(this.right * direction * power);
           const delta = left - right;
-          if (delta && this.similarSign(left, right)) {
+          if (delta && !this.notSimilarSign(left, right)) {
             const absDelta = Math.abs(delta);
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
@@ -105,8 +105,8 @@
         this.left = 1;
         this.right = 1;
       },
-      similarSign(a, b) {
-        return (a >= 0 && b >= 0) || (a <= 0 && b <= 0);
+      notSimilarSign(a, b) {
+        return (a > 0 && b < 0) || (a < 0 && b > 0);
       }
     },
     watch: {

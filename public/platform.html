@@ -24,6 +24,10 @@
         platformSocket: config.platformSocket
     }, se);
 
+    setTimeout(() => {
+      console.log('STATE: ', webrtc.pc.iceConnectionState);
+    }, 5000);
+
     window.onerror = function(err) {
       console.log(err)
     };
