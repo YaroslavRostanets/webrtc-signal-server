@@ -42,6 +42,7 @@
     props: ['se', 'webrtc', 'videoStream', 'dataChannel'],
     data() {
       return {
+        timer: null,
         power: 0,
         direction: 0,
         drive: true,
@@ -69,15 +70,14 @@
         this.webrtc.createOffer();
       },
       run() {
-        setInterval(() => {
+        this.timer = setInterval(() => {
           const now = new Date();
           const power = this.power * 0.01;
           const direction = this.drive ? 1 : -1;
           let left = floor(this.left * direction * power);
           let right = floor(this.right * direction * power);
           const delta = left - right;
-          const absDelta = Math.abs(left - right);
-          if (absDelta) {
+          if (delta && this.similarSign(left, right)) {
             const absDelta = Math.abs(delta);
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
@@ -102,6 +102,9 @@
       endHandler() {
         this.left = 1;
         this.right = 1;
+      },
+      similarSign(a, b) {
+        return (a >= 0 && b >= 0) || (a <= 0 && b <= 0);
       }
     },
     watch: {
@@ -115,6 +118,9 @@
         if (channel) {
           this.run();
           this.setFetching(false);
+        } else {
+          clearInterval(this.timer);
+          this.timer = null;
         }
       },
       direction(value) {

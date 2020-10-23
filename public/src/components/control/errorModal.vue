@@ -28,6 +28,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 18px;
+    z-index: 1;
   }
   .modal-header {
     padding: 2px 5px;

@@ -25,6 +25,10 @@
         isControl: false,
         platformSocket: config.platformSocket
     }, se);
+
+    window.onerror = function(err) {
+      console.log(err)
+    };
 </script>
 </body>
 </html>
