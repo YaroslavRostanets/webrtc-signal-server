@@ -99,7 +99,10 @@
       connectionState(conState) {
         console.log('CON_STATE: ', conState);
         this.isConnError = ['failed', 'closed', 'disconnected'].some(state => state === conState);
-
+        if (this.isConnError) {
+          this.dataChannel = null;
+          this.videoStream = null;
+        }
       }
     }
   }
