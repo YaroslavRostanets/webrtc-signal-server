@@ -39,7 +39,7 @@
   export default {
     name: "mobileDisplay",
     store: store,
-    props: ['se', 'webrtc', 'videoStream'],
+    props: ['se', 'webrtc', 'videoStream', 'dataChannel'],
     data() {
       return {
         power: 0,
@@ -81,7 +81,7 @@
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;
           }
-          this.channel.send(JSON.stringify({
+          this.dataChannel.send(JSON.stringify({
             //time: `${now.toLocaleTimeString()}: ${now.getMilliseconds()}`,
             data: [floor(left), floor(right)]
           }));
@@ -110,8 +110,8 @@
           this.$refs.video.play();
         }
       },
-      channel() {
-        if (this.channel) {
+      dataChannel(channel) {
+        if (channel) {
           this.run();
           this.setFetching(false);
         }
