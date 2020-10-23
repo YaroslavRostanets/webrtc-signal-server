@@ -169,7 +169,7 @@
       this.$refs['balance-slider'].noUiSlider.on('update',(values, handle) => this.direction = parseFloat(values[handle]));
       this.$refs['balance-slider'].noUiSlider.on('end', () => this.$refs['balance-slider'].noUiSlider.set(0));
 
-      this.run();
+      //this.run();
     },
     components: {
       VueSlider,
