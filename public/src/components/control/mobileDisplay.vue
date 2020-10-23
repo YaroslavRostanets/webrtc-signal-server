@@ -76,7 +76,8 @@
           let left = floor(this.left * direction * power);
           let right = floor(this.right * direction * power);
           const delta = left - right;
-          if (delta) {
+          const absDelta = Math.abs(left - right);
+          if (absDelta) {
             const absDelta = Math.abs(delta);
             if (delta > 0) left = left + absDelta > 1 ? 1 : left + absDelta;
             else right = right + absDelta > 1 ? 1: right + absDelta;

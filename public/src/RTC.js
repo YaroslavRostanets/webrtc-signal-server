@@ -93,6 +93,7 @@ function pcHandlers(pc, _this) {
   _this.pc.addEventListener('track', e => _this.videoStreamCallback(e.streams[0]));
 
   _this.pc.onconnectionstatechange = ev => {
+    console.log('CHANGE: ', ev);
     if (_this.isControl) {
       _this.setConnectionState(_this.pc.connectionState);
     } else {
@@ -102,7 +103,8 @@ function pcHandlers(pc, _this) {
     }
   };
   _this.pc.onicecandidateerror = err => {
-    window.location.reload();
+    console.log('CANDIDATE_ERROR: ', err);
+    //window.location.reload();
   }
 }
 
