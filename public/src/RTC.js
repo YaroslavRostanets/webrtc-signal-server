@@ -28,9 +28,6 @@ export default class RTC {
         this.channel.onmessage = (e) => {
           this._parseControlMessage(e);
         };
-        setTimeout(() => {
-          console.log('STATE: ', this.pc.iceConnectionState);
-        }, 5000);
       };
     }
   }
@@ -48,7 +45,6 @@ export default class RTC {
   async createOffer() {
     const offer = await this.pc.createOffer({offerToReceiveVideo: true});
     this.pc.setLocalDescription(offer);
-    console.log('SEND OFFER: ', offer);
     this.SE.send('SDP', offer);
   }
 
@@ -58,7 +54,6 @@ export default class RTC {
       this.platformSocket = await platformSocket(this.platformSocketUri);
       const answer = await this.pc.createAnswer();
       this.pc.setLocalDescription(answer);
-      console.log('SEND ANSWER: ', answer);
       this.SE.send('SDP', answer);
     } catch (err) {
       console.error(err);
@@ -87,7 +82,6 @@ export default class RTC {
 
 function pcHandlers(pc, _this) {
   _this.pc.onicecandidate = evt => {
-    console.log('CANDIDATE: ', evt.candidate);
     if (evt.candidate) _this.SE.send('ICE', evt.candidate);
   };
 
