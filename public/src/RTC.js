@@ -101,6 +101,9 @@ function pcHandlers(pc, _this) {
       }
     }
   };
+  _this.pc.onicecandidateerror = err => {
+    window.location.reload();
+  }
 }
 
 function seHandlers(_this) {
