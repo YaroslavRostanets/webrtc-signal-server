@@ -1,8 +1,15 @@
 <template>
   <div>
     <div v-if="isConnect">
-      <mobile-display :se="se" :webrtc="webrtc" :videoStream="videoStream" v-if="detectMob"></mobile-display>
-      <display :se="se" :webrtc="webrtc" v-else></display>
+      <mobile-display :se="se"
+                      :webrtc="webrtc"
+                      :videoStream="videoStream"
+                      :dataChannel="dataChannel" v-if="detectMob"></mobile-display>
+      <display
+          :se="se"
+          :webrtc="webrtc"
+          :videoStream="videoStream"
+          :dataChannel="dataChannel" v-else></display>
     </div>
     <auth v-else @submit="connect"></auth>
 
@@ -34,6 +41,7 @@
     data() {
       return {
         videoStream: null,
+        dataChannel: null,
         isConnError: false
       }
     },
@@ -76,7 +84,7 @@
         this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
           this.videoStream = srcObject;
           this.setFetching(false);
-        }, dataChannel => this.channel = dataChannel, this.setConnectionState);
+        }, dataChannel => this.dataChannel = dataChannel, this.setConnectionState);
       }
     },
     created() {
@@ -89,6 +97,7 @@
     },
     watch: {
       connectionState(conState) {
+        console.log('CON_STATE: ', conState);
         return ['failed', 'closed', 'disconnected'].some(state => state === conState);
       }
     }
