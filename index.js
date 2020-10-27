@@ -27,10 +27,6 @@ global.conformitys = {
   }
 };
 
-setInterval(() => {
-  console.table(global.conformitys);
-}, 30000)
-
 http.createServer(function (req, res) {
   if (routeParser(req, res)) return;
   file.serve(req, res);
@@ -63,12 +59,16 @@ const connectionHandler = (ws, req) => {
   ws.onclose = () => {
     sockets.allExcept(ws).forEach( socket => socket.send('DISCONNECT'));
     global.conformitys.unset(device, id);
+    console.table(global.conformitys);
   };
+  console.table(global.conformitys);
 }
 
 wss.on('connection', connectionHandler);
 
 const messageHandler = (id, device, message, ws) => {
+  console.log('ID: ', id);
+  console.log('CONF: ', global.conformitys);
   const socket = global.conformitys[id][device === PLATFORM ? CONTROL : PLATFORM];
   if (socket) socket.send(message);
 };
