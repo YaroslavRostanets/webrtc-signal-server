@@ -55,7 +55,7 @@ const connectionHandler = (ws, req) => {
     global.conformitys.set(CONTROL, id, ws);
   }
   console.log(global.conformitys);
-  ws.on('message', message => messageHandler(message, ws));
+  ws.on('message', message => messageHandler(id, device, message, ws));
   ws.onclose = () => {
     sockets.allExcept(ws).forEach( socket => socket.send('DISCONNECT'));
     global.conformitys.unset(device, id);
