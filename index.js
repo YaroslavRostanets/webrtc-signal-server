@@ -10,6 +10,15 @@ const { PLATFORM, CONTROL } = require('./constants.js');
 
 const file = new(static.Server)('./public');
 
+Array.prototype.removeEl = function(el) {
+  const index = this.findIndex(item => el === item);
+  if (index) this.slice(index, 1);
+};
+Array.prototype.allExcept = function(el) {
+  return this.filter(item => item !== el);
+};
+const sockets = [];
+
 global.conformitys = {
   set(device, id, ws) {
     if (!this[id]) this[id] = {};
@@ -46,6 +55,7 @@ const httpsServer = https.createServer(options, function (req, res) {
 const wss = new ws.Server({ server: httpsServer });
 
 const connectionHandler = (ws, req) => {
+  sockets.push(ws);
   const parsedURL = url.parse(req.url, true);
   const {id} = parsedURL.query;
   const device = trim(parsedURL.pathname, '/') === PLATFORM ? PLATFORM : CONTROL;
