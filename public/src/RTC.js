@@ -29,8 +29,10 @@ export default class RTC {
           this._parseControlMessage(e);
         };
         setInterval(() => {
-          console.log('STATE: ', this.pc.iceConnectionState);
-        }, 5000);
+          if (this.pc.iceConnectionState === 'disconnected' || this.pc.iceConnectionState === 'failed') {
+            window.location.reload();
+          }
+        }, 1000);
       };
     }
   }
