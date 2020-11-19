@@ -4,7 +4,8 @@ const webdriver = require('selenium-webdriver'),
 
 const firefox = require('selenium-webdriver/firefox');
 
-var options = new firefox.Options();
+const options = new firefox.Options();
+options.addArguments("-headless");
 options.setPreference("permissions.default.microphone", 1);
 options.setPreference("permissions.default.camera", 1);
 options.setPreference("network.websocket.allowInsecureFromHTTPS", true);
