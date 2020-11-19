@@ -26,7 +26,7 @@
         platformSocket: config.platformSocket
     }, se);
 
-    webrtc.on('error', () => {
+    webrtc.on('disconnected', () => {
         window.location.reload();
     });
 
