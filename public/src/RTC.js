@@ -3,16 +3,13 @@ import {platformSocket} from './platformSocket.js';
 import {config} from './rtcConfig.js';
 
 export default class RTC {
-  constructor(options, signalEmitter, videoStreamCallback, dataChannelCallback, setConnectionState) {
+  constructor(options, signalEmitter) {
     this.handlers = {};
     const {isControl} = options;
     this.isControl = isControl;
     this.SE = signalEmitter;
-    this.videoStreamCallback = videoStreamCallback;
-    this.dataChannelCallback = dataChannelCallback;
     this.platformSocketUri = options.platformSocket;
     this.pc = new RTCPeerConnection(config);
-    this.setConnectionState = setConnectionState;
 
     pcHandlers(this.pc, this);
     seHandlers(this);
@@ -24,9 +21,10 @@ export default class RTC {
       this.pc.ondatachannel = (e) => {
         this.channel = e.channel;
         this.channel.onmessage = (e) => this._parseControlMessage(e);
-        setInterval(() => {
+        let timerId = setInterval(() => {
           if (this.pc.iceConnectionState === 'disconnected' || this.pc.iceConnectionState === 'failed') {
-            window.location.reload();
+            clearInterval(timerId);
+            timerId = null;
             this.emit('disconnected');
           }
         }, 1000);
@@ -42,7 +40,7 @@ export default class RTC {
   }
 
   emit(eventName, ...values) {
-    this.handlers[eventName].forEach(fn => fn.apply(values))
+    this.handlers[eventName].forEach(fn => fn.apply(this, values));
   }
 
   _setRemoteSDP(sdp) {
@@ -101,18 +99,15 @@ function pcHandlers(pc, _this) {
   _this.pc.onconnection = () => console.log('Connection established');
 
   _this.pc.addEventListener('track', e => {
-    console.log('E: ', e);
-    console.log('STREAMS: ', e.streams[0]);
     _this.emit('videoStream', e.streams[0]);
   });
 
   _this.pc.onconnectionstatechange = ev => {
-    console.log('CHANGE: ', ev);
     if (_this.isControl) {
-      _this.setConnectionState(_this.pc.connectionState);
+      _this.emit('connectionStateChange', _this.pc.connectionState);
     } else {
       if (['disconnected', 'closed', 'failed'].some(state => _this.pc.connectionState === state)) {
-        window.location.reload();
+        _this.emit('disconnected');
       }
     }
   };

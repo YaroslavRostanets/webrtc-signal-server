@@ -26,6 +26,10 @@
         platformSocket: config.platformSocket
     }, se);
 
+    webrtc.on('error', () => {
+        window.location.reload();
+    });
+
     window.onerror = function(err) {
       console.log(err)
     };
