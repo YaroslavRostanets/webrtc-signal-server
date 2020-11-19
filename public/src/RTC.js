@@ -4,6 +4,7 @@ import {config} from './rtcConfig.js';
 
 export default class RTC {
   constructor(options, signalEmitter, videoStreamCallback, dataChannelCallback, setConnectionState) {
+    this.handlers = {};
     const {isControl} = options;
     this.isControl = isControl;
     this.SE = signalEmitter;
@@ -18,23 +19,30 @@ export default class RTC {
 
     if (isControl) {
       this.channel = this.pc.createDataChannel('RTCDataChannel');
-      this.channel.onopen = () => this.dataChannelCallback(this.channel);
-      this.channel.onclose = () => console.log('Channel closed');
+      this.channel.onopen = () => this.emit('dataChannel', this.channel);
     } else {
       this.pc.ondatachannel = (e) => {
         this.channel = e.channel;
-        this.channel.onopen = () => console.log('Channel open');
-        this.channel.onclose = () => console.log('Channel closed');
-        this.channel.onmessage = (e) => {
-          this._parseControlMessage(e);
-        };
+        this.channel.onmessage = (e) => this._parseControlMessage(e);
         setInterval(() => {
           if (this.pc.iceConnectionState === 'disconnected' || this.pc.iceConnectionState === 'failed') {
             window.location.reload();
+            this.emit('disconnected');
           }
         }, 1000);
       };
     }
+  }
+
+  on(eventName, handler) {
+    if (!this.handlers[eventName]) {
+      this.handlers[eventName] = [];
+    }
+    this.handlers[eventName].push(handler);
+  }
+
+  emit(eventName, ...values) {
+    this.handlers[eventName].forEach(fn => fn.apply(values))
   }
 
   _setRemoteSDP(sdp) {
@@ -92,7 +100,7 @@ function pcHandlers(pc, _this) {
 
   _this.pc.onconnection = () => console.log('Connection established');
 
-  _this.pc.addEventListener('track', e => _this.videoStreamCallback(e.streams[0]));
+  _this.pc.addEventListener('track', e => _this.emit('videoStream', e.streams[0]));
 
   _this.pc.onconnectionstatechange = ev => {
     console.log('CHANGE: ', ev);

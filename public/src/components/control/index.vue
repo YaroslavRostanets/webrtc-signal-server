@@ -81,10 +81,15 @@
       },
       createRTC() {
         console.log('SE: ', this.se);
-        this.webrtc = new RTC({isControl: true}, this.se, srcObject => {
+        this.webrtc = new RTC({isControl: true}, this.se, () => {}, () => {}, this.setConnectionState);
+
+        this.webrtc.on('videoStream', srcObject => {
           this.videoStream = srcObject;
           this.setFetching(false);
-        }, dataChannel => this.dataChannel = dataChannel, this.setConnectionState);
+        });
+
+        this.webrtc.on('dataChannel', dataChannel => this.dataChannel = dataChannel);
+
       }
     },
     created() {

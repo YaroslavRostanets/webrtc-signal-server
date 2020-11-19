@@ -19,17 +19,15 @@ Array.prototype.allExcept = function(el) {
 };
 const sockets = [];
 
-global.conformitys = {
+connections = {
   set(device, id, ws) {
     if (!this[id]) this[id] = {};
     this[id][device] = ws;
-    console.table(global.conformitys);
   },
   unset(device, id) {
     try {
       delete this[id][device];
       if (!Object.keys(this[id]).length) delete this[id];
-      console.log('RESULT: ', this);
     } catch (err) {
       console.log(err);
     }
@@ -60,25 +58,22 @@ const connectionHandler = (ws, req) => {
   const {id} = parsedURL.query;
   const device = trim(parsedURL.pathname, '/') === PLATFORM ? PLATFORM : CONTROL;
   if (device === PLATFORM) {
-    global.conformitys.set(PLATFORM, id, ws);
+    connections.set(PLATFORM, id, ws);
   } else {
-    global.conformitys.set(CONTROL, id, ws);
+    connections.set(CONTROL, id, ws);
   }
-  console.log(global.conformitys);
+  console.log(connections);
   ws.on('message', message => messageHandler(id, device, message, ws));
   ws.onclose = () => {
-    sockets.allExcept(ws).forEach( socket => socket.send('DISCONNECT'));
-    global.conformitys.unset(device, id);
+    connections[id][device].send('DISCONNECT');
+    connections.unset(device, id);
     console.table(global.conformitys);
   };
-  console.table(global.conformitys);
 }
 
 wss.on('connection', connectionHandler);
 
 const messageHandler = (id, device, message, ws) => {
-  console.log('ID: ', id);
-  console.log('CONF: ', global.conformitys);
-  const socket = global.conformitys[id][device === PLATFORM ? CONTROL : PLATFORM];
+  const socket = connections[id][device === PLATFORM ? CONTROL : PLATFORM];
   if (socket) socket.send(message);
 };
