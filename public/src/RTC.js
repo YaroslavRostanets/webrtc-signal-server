@@ -100,7 +100,11 @@ function pcHandlers(pc, _this) {
 
   _this.pc.onconnection = () => console.log('Connection established');
 
-  _this.pc.addEventListener('track', e => _this.emit('videoStream', e.streams[0]));
+  _this.pc.addEventListener('track', e => {
+    console.log('E: ', e);
+    console.log('STREAMS: ', e.streams[0]);
+    _this.emit('videoStream', e.streams[0]);
+  });
 
   _this.pc.onconnectionstatechange = ev => {
     console.log('CHANGE: ', ev);
