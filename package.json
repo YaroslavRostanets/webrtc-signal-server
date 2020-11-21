@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "prod": "pm2 start index.js",
+    "doc": "node ./node_modules/jsdoc/jsdoc.js --recurse -c jsdoc.conf.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Yaroslav Rostanets <rostanets@gmail.com>",
@@ -18,5 +19,9 @@
     "selenium-webdriver": "^4.0.0-alpha.7",
     "url": "^0.11.0",
     "ws": "^7.2.1"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.6.6",
+    "tui-jsdoc-template": "^1.2.2"
   }
 }

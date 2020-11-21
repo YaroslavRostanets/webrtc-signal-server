@@ -10,16 +10,13 @@ const { PLATFORM, CONTROL } = require('./constants.js');
 
 const file = new(static.Server)('./public');
 
-Array.prototype.removeEl = function(el) {
-  const index = this.findIndex(item => el === item);
-  if (index) this.slice(index, 1);
-};
-Array.prototype.allExcept = function(el) {
-  return this.filter(item => item !== el);
-};
-const sockets = [];
-
+/**
+ * @description - Здесь храним websocket'ы доступные по ключам
+ * connections[id][DEVICE] где id - идентификатор платформы (4 цифры), а DEVICE - указатель на то
+ * является ли сокет платформы или панелью управления
+ */
 connections = {
+
   set(device, id, ws) {
     if (!this[id]) this[id] = {};
     this[id][device] = ws;
@@ -34,26 +31,23 @@ connections = {
   }
 };
 
-http.createServer(function (req, res) {
-  if (routeParser(req, res)) return;
-  file.serve(req, res);
-}).listen(3000); //the server object listens on port 8080
-
+// SSL
 const options = {
   key: fs.readFileSync('./ssl/private.key', 'utf8'),
   cert: fs.readFileSync('./ssl/certificate.crt', 'utf8'),
   ca: fs.readFileSync('./ssl/ca_bundle.crt', 'utf8'),
 };
 
+// Создаем http сервер
 const httpsServer = https.createServer(options, function (req, res) {
   if (routeParser(req, res)) return;
   file.serve(req, res);
 }).listen(2999); //the server object listens on port 8080
 
+// Создаем ws сервер
 const wss = new ws.Server({ server: httpsServer });
 
 const connectionHandler = (ws, req) => {
-  sockets.push(ws);
   const parsedURL = url.parse(req.url, true);
   const {id} = parsedURL.query;
   const device = trim(parsedURL.pathname, '/') === PLATFORM ? PLATFORM : CONTROL;
@@ -67,7 +61,7 @@ const connectionHandler = (ws, req) => {
   ws.onclose = () => {
     connections[id][device].send('DISCONNECT');
     connections.unset(device, id);
-    console.table(global.conformitys);
+    console.table(connections);
   };
 }
 
