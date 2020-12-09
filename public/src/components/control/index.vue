@@ -28,6 +28,7 @@
   import mobileDisplay from "./mobileDisplay";
   import errorModal from "./errorModal";
   import store from '../../configureStore';
+  import config from "../../../config";
 
   export default {
     name: "control",
@@ -94,12 +95,7 @@
       }
     },
     created() {
-      fetch(`${window.location.origin}/config.json`)
-        .then(res => res.json())
-        .then(config => {
-          console.log('CONFIG: ', config);
-          store.commit('setConfig', config);
-        });
+      store.commit('setConfig', config);
     },
     watch: {
       connectionState(conState) {
