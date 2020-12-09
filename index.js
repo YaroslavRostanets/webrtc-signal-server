@@ -67,6 +67,7 @@ const connectionHandler = (ws, req) => {
 
 wss.on('connection', connectionHandler);
 
+//ф-я обработчик для полученых сообщений
 const messageHandler = (id, device, message, ws) => {
   const socket = connections[id][device === PLATFORM ? CONTROL : PLATFORM];
   if (socket) socket.send(message);

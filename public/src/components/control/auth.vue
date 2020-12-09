@@ -1,6 +1,5 @@
 <template>
   <div class="wrap">
-
     <div class="content">
       <div class="border">
         Enter HASH of your platform, please :
@@ -61,7 +60,7 @@
     width: 500px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 80px;
+    margin-top: 40px;
     .content {
       position: absolute;
       left: 60px;
