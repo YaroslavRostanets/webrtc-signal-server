@@ -15,7 +15,7 @@
     "fs": "0.0.1-security",
     "https": "^1.0.0",
     "node-static": "^0.7.11",
-    "pm2": "^4.5.0",
+    "pm2": "^5.2.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "url": "^0.11.0",
     "ws": "^7.2.1"
